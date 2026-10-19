@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">开合跳闹钟</string>
+    <string name="app_subtitle">不起床运动，闹钟不会停</string>
+
+    <string name="next_alarm_none">暂无启用的闹钟</string>
+    <string name="next_alarm_fmt">下次响铃 · %1$s</string>
+    <string name="add_alarm">添加闹钟</string>
+    <string name="empty_title">还没有闹钟</string>
+    <string name="empty_desc">点右下角添加一个，明早让开合跳叫你起床</string>
+
+    <string name="new_alarm">新建闹钟</string>
+    <string name="edit_alarm">编辑闹钟</string>
+    <string name="save">保存</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="delete_confirm">删除后无法恢复，确定删除这个闹钟吗？</string>
+    <string name="emergency_confirm">要强制关闭闹钟吗？\n运动记录不会保存。</string>
+    <string name="repeat_label">重复</string>
+    <string name="exercise_label">运动类型</string>
+    <string name="reps_label">目标次数</string>
+    <string name="reps_unit">个</string>
+    <string name="reps_value_fmt">%1$d 个</string>
+    <string name="once">仅一次</string>
+    <string name="every_day">每天</string>
+    <string name="workdays">工作日</string>
+    <string name="weekend">周末</string>
+    <string name="coming_soon">敬请期待</string>
+    <string name="exercise_jumping_jack">开合跳</string>
+    <string name="exercise_squat">深蹲</string>
+    <string name="exercise_pushup">俯卧撑</string>
+
+    <string name="ringing_title">该起床了</string>
+    <string name="ringing_reps_fmt">完成 %1$d 个开合跳才能关闭闹钟</string>
+    <string name="ringing_start">开始挑战</string>
+    <string name="ringing_hint">打开摄像头，AI 会数你做了几个</string>
+    <string name="ringing_back_hint">先完成运动，闹钟才会停</string>
+    <string name="ringing_emergency">紧急关闭</string>
+    <string name="ringing_emergency_hold">长按 5 秒强制关闭闹钟</string>
+    <string name="ringing_emergency_done">闹钟已强制关闭</string>
+
+    <string name="exercise_title">开合跳挑战</string>
+    <string name="exercise_prepare">准备</string>
+    <string name="exercise_hint_stand">站到镜头前，让全身进入画面</string>
+    <string name="exercise_hint_open">向上跳起，双臂举过头顶</string>
+    <string name="exercise_hint_closed">很好！回到并腿、手臂下垂</string>
+    <string name="exercise_hint_too_close">离镜头太近了，往后退一步</string>
+    <string name="exercise_hint_no_person">没看到人，请站到镜头正前方</string>
+    <string name="exercise_hint_feet">请后退一点，让双脚进入画面</string>
+    <string name="exercise_hint_arms">请把双手也放进画面</string>
+    <string name="exercise_switch_camera">切换摄像头</string>
+    <string name="exercise_quit">退出</string>
+    <string name="exercise_success">完成！</string>
+    <string name="exercise_success_sub">闹钟已关闭，早安</string>
+    <string name="exercise_perm_title">需要相机权限</string>
+    <string name="exercise_perm_desc">AI 要用摄像头确认你真的做了运动，请允许使用相机。</string>
+    <string name="exercise_perm_grant">去授权</string>
+    <string name="exercise_force_hint">长按此处 10 秒可强制关闭</string>
+    <string name="exercise_force_progress">继续长按 %1$d 秒…</string>
+    <string name="exercise_quit_confirm">确定退出挑战？闹钟会继续响。</string>
+
+    <string name="notif_channel_alarm">闹钟响铃</string>
+    <string name="notif_channel_alarm_desc">闹钟到点时的全屏提醒</string>
+    <string name="notif_ringing_text">完成开合跳后才会停止</string>
+
+    <string name="toast_perm_notification">未开启通知权限，闹钟可能无法全屏提醒</string>
+    <string name="toast_alarm_saved">闹钟已保存</string>
+    <string name="toast_alarm_deleted">闹钟已删除</string>
+    <string name="toast_exact_denied">请在系统设置中允许「闹钟和提醒」</string>
+
+    <string name="fsi_title">开启锁屏全屏提醒</string>
+    <string name="fsi_desc">Android 14 起，系统默认只给通话/闹钟类应用弹出全屏提醒。允许「开合跳闹钟」使用全屏通知后，锁屏状态下闹钟到点才能直接跳到运动页面；否则只会收到一条通知横幅。</string>
+    <string name="fsi_open">去设置</string>
+    <string name="fsi_later">以后再说</string>
+
+    <string name="debug_menu">调试工具</string>
+    <string name="debug_test_10s">10 秒后测试响铃</string>
+    <string name="debug_video">用测试视频验证识别</string>
+    <string name="debug_testing_scheduled">10 秒后响铃</string>
+    <string name="video_title">识别算法验证</string>
+    <string name="video_loading">正在解码视频…</string>
+    <string name="video_stats_fmt">第 %1$d / %2$d 帧 · 计数 %3$d · 手臂 %4$.2f · 双腿 %5$.2f · %6$s</string>
+</resources>
