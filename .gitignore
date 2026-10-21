@@ -13,4 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-.idea
+
+# IDE configurations
+.idea/
+*.bak
