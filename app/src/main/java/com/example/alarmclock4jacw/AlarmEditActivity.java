@@ -43,6 +43,9 @@ public class AlarmEditActivity extends AppCompatActivity {
     private View wordSection;
     private View typeJack;
     private View typeWord;
+    private TextView typeWordTag;
+    private TextView wordModeValue;
+    private String wordMode = Alarm.TASK_WORD_CHOICE;
     private boolean wordAvailable;
     private TextView repeatSummary;
 
@@ -70,6 +73,7 @@ public class AlarmEditActivity extends AppCompatActivity {
             isNew = true;
         }
         repeatMask = alarm.repeatMask;
+        wordMode = alarm.isWordTask() ? alarm.taskType : Alarm.TASK_WORD_CHOICE;
 
         TextView title = findViewById(R.id.screen_title);
         title.setText(isNew ? R.string.new_alarm : R.string.edit_alarm);
@@ -85,13 +89,16 @@ public class AlarmEditActivity extends AppCompatActivity {
         wordCountValue = findViewById(R.id.word_count_value);
         wordBookValue = findViewById(R.id.word_book_value);
         typeJack = findViewById(R.id.type_jumping_jack);
-        typeWord = findViewById(R.id.type_word_spell);
+        typeWord = findViewById(R.id.type_word);
+        typeWordTag = findViewById(R.id.type_word_tag);
+        wordModeValue = findViewById(R.id.word_mode_value);
 
         setupPickers();
         setupRepeatRow();
         setupSlider();
         setupTaskSelector();
         setupWordSlider();
+        setupWordModeRow();
         setupWordBookRow();
 
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
@@ -256,7 +263,7 @@ public class AlarmEditActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.word_list_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
-            selectTask(Alarm.TASK_WORD_SPELL);
+            selectTask(wordMode);
         });
         updateTaskUi();
     }
@@ -270,13 +277,19 @@ public class AlarmEditActivity extends AppCompatActivity {
         boolean word = alarm.isWordTask();
         wordAvailable = !WordStore.words(this, WordStore.getBook(this)).isEmpty();
 
-        typeJack.setBackgroundResource(word ? R.drawable.bg_option : R.drawable.bg_option_selected);
+        typeJack.setBackgroundResource(!word ? R.drawable.bg_option_selected : R.drawable.bg_option);
         typeWord.setBackgroundResource(word ? R.drawable.bg_option_selected : R.drawable.bg_option);
         typeJack.setAlpha(1f);
         typeWord.setAlpha(wordAvailable ? 1f : 0.5f);
 
+        if (word) wordMode = alarm.taskType;
+        typeWordTag.setText(Alarm.TASK_WORD_CHOICE.equals(wordMode)
+                ? R.string.word_mode_choice
+                : R.string.word_mode_spell);
+
         repsSection.setVisibility(word ? View.GONE : View.VISIBLE);
         wordSection.setVisibility(word ? View.VISIBLE : View.GONE);
+        updateWordModeValue();
         updateWordBookValue();
     }
 
@@ -285,6 +298,35 @@ public class AlarmEditActivity extends AppCompatActivity {
         wordCountValue.setText(getString(R.string.word_count_fmt, (int) wordCountSlider.getValue()));
         wordCountSlider.addOnChangeListener((slider, value, fromUser) ->
                 wordCountValue.setText(getString(R.string.word_count_fmt, (int) value)));
+    }
+
+    private void setupWordModeRow() {
+        updateWordModeValue();
+        findViewById(R.id.word_mode_row).setOnClickListener(v -> showWordModeDialog());
+    }
+
+    private void updateWordModeValue() {
+        wordModeValue.setText(Alarm.TASK_WORD_CHOICE.equals(wordMode)
+                ? R.string.word_mode_choice
+                : R.string.word_mode_spell);
+    }
+
+    /** 背单词模式：只切换选择/拼写，任务类型仍归到同一张“背单词”卡片。 */
+    private void showWordModeDialog() {
+        final String[] values = {Alarm.TASK_WORD_CHOICE, Alarm.TASK_WORD_SPELL};
+        final String[] labels = {getString(R.string.word_mode_choice), getString(R.string.word_mode_spell)};
+        int checked = Alarm.TASK_WORD_SPELL.equals(wordMode) ? 1 : 0;
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.word_mode_label)
+                .setSingleChoiceItems(labels, checked, (d, which) -> {
+                    wordMode = values[which];
+                    if (alarm.isWordTask()) alarm.taskType = wordMode;
+                    d.dismiss();
+                    updateTaskUi();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void setupWordBookRow() {

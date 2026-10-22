@@ -32,6 +32,9 @@
     <string name="reps_label">目标次数</string>
     <string name="word_task_name">背单词</string>
     <string name="word_task_tag">拼写</string>
+    <string name="word_mode_choice">选择</string>
+    <string name="word_mode_spell">拼写</string>
+    <string name="word_mode_label">背单词模式</string>
     <string name="word_count_label">目标单词数</string>
     <string name="word_count_fmt">%1$d 个</string>
     <string name="word_count_value_fmt">%1$d 个单词</string>
@@ -55,10 +58,11 @@
 
     <string name="ringing_title">该起床了</string>
     <string name="ringing_reps_fmt">完成 %1$d 个开合跳才能关闭闹钟</string>
-    <string name="ringing_words_fmt">完成 %1$d 个单词拼写才能关闭闹钟</string>
+    <string name="ringing_words_fmt">完成 %1$d 道单词题才能关闭闹钟</string>
     <string name="ringing_start">开始挑战</string>
     <string name="ringing_hint">打开摄像头，AI 会数你做了几个</string>
     <string name="ringing_word_hint">看中文，把英文单词拼出来</string>
+    <string name="ringing_choice_hint">看中文，选出对应的英文单词</string>
     <string name="ringing_back_hint">先完成运动，闹钟才会停</string>
     <string name="ringing_word_back_hint">先拼完单词，闹钟才会停</string>
     <string name="ringing_volume_locked">闹钟音量已锁定最大</string>
@@ -69,6 +73,13 @@
     <string name="word_input_hint">输入英文拼写</string>
     <string name="word_submit">提交</string>
     <string name="word_hint_default">看中文，拼出英文单词</string>
+    <string name="word_choice_hint">选出对应的英文单词</string>
+    <string name="word_play">播放发音</string>
+    <string name="word_tts_missing_title">缺少英语语音包</string>
+    <string name="word_tts_missing_desc">系统 TTS 没有可用的美式英语语音。下载离线语音包后就能听到单词发音；现在仍可继续答题。</string>
+    <string name="word_tts_settings">去下载</string>
+    <string name="word_tts_later">先答题</string>
+    <string name="word_review_wrong">答错</string>
     <string name="word_hint_first_fmt">提示：首字母 %1$s</string>
     <string name="word_hint_length_fmt">提示：首字母 %1$s · 共 %2$d 个字母</string>
     <string name="word_answer_fmt">答案：%1$s，已跳到下一个</string>

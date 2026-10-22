@@ -34,7 +34,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             fake.id = -1L;
             fake.targetReps = intent.getIntExtra(EXTRA_REPS, 10);
             fake.taskType = intent.getStringExtra(EXTRA_TASK);
-            if (!Alarm.TASK_WORD_SPELL.equals(fake.taskType)) fake.taskType = Alarm.TASK_JUMPING_JACK;
+            if (!Alarm.isWordTask(fake.taskType)) fake.taskType = Alarm.TASK_JUMPING_JACK;
             fake.targetWords = intent.getIntExtra(EXTRA_WORDS, 10);
             java.util.Calendar c = java.util.Calendar.getInstance();
             fake.hour = c.get(java.util.Calendar.HOUR_OF_DAY);

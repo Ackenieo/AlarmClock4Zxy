@@ -4,7 +4,10 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -53,5 +56,43 @@ public class WordTest {
     public void meaningTextJoinsWithSemicolon() {
         Word w = new Word("test", Arrays.asList("测试", "试验"));
         assertEquals("测试；试验", w.meaningText());
+    }
+
+    @Test
+    public void optionsContainOneCorrectAndUniqueWords() {
+        List<Word> all = new ArrayList<>();
+        all.add(new Word("apple", Arrays.asList("苹果")));
+        all.add(new Word("apple2", Arrays.asList("苹果")));
+        all.add(new Word("banana", Arrays.asList("香蕉")));
+        all.add(new Word("orange", Arrays.asList("橙子")));
+        all.add(new Word("grape", Arrays.asList("葡萄")));
+        all.add(new Word("peach", Arrays.asList("桃子")));
+        all.add(new Word("lemon", Arrays.asList("柠檬")));
+        all.add(new Word("melon", Arrays.asList("甜瓜")));
+        all.add(new Word("cherry", Arrays.asList("樱桃")));
+        all.add(new Word("berry", Arrays.asList("浆果")));
+
+        Word correct = all.get(0);
+        List<Word> options = Word.options(all, correct, 4, new Random(7));
+
+        assertEquals(4, options.size());
+        assertTrue(options.contains(correct));
+
+        Set<String> words = new HashSet<>();
+        for (Word w : options) {
+            assertTrue(words.add(w.word));
+            if (w != correct) {
+                for (String meaning : w.meanings) {
+                    assertFalse(correct.meanings.contains(meaning));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void alarmsTreatBothWordModesAsWordTasks() {
+        assertTrue(Alarm.isWordTask(Alarm.TASK_WORD_CHOICE));
+        assertTrue(Alarm.isWordTask(Alarm.TASK_WORD_SPELL));
+        assertFalse(Alarm.isWordTask(Alarm.TASK_JUMPING_JACK));
     }
 }
