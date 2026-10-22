@@ -195,7 +195,7 @@
                         android:layout_height="1dp" />
 
                     <LinearLayout
-                        android:id="@+id/type_word_spell"
+                        android:id="@+id/type_word"
                         android:layout_width="106dp"
                         android:layout_height="84dp"
                         android:background="@drawable/bg_option"
@@ -211,11 +211,11 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/type_word_spell_tag"
+                            android:id="@+id/type_word_tag"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
-                            android:text="@string/word_task_tag"
+                            android:text="@string/word_mode_choice"
                             android:textColor="@color/text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -382,6 +382,46 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="4dp"
+                    android:background="@color/stroke" />
+
+                <LinearLayout
+                    android:id="@+id/word_mode_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/word_mode_label"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/word_mode_value"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginStart="6dp"
+                        android:contentDescription="@string/word_mode_label"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_tertiary" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
                     android:background="@color/stroke" />
 
                 <LinearLayout

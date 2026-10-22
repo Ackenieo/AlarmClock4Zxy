@@ -15,6 +15,7 @@ import java.util.Locale;
 public class Alarm {
 
     public static final String TASK_JUMPING_JACK = "JUMPING_JACK";
+    public static final String TASK_WORD_CHOICE = "WORD_CHOICE";
     public static final String TASK_WORD_SPELL = "WORD_SPELL";
 
     public long id;
@@ -25,6 +26,8 @@ public class Alarm {
     public int targetReps = 20;
     public int targetWords = 10;
     public String taskType = TASK_JUMPING_JACK;
+    /** 预留商城词库 ID；为空时使用全局词库设置 */
+    public String wordBookId;
 
     public Alarm() {
         this.id = System.currentTimeMillis();
@@ -34,8 +37,19 @@ public class Alarm {
         return repeatMask != 0;
     }
 
+    public static boolean isWordTask(String type) {
+        return TASK_WORD_CHOICE.equals(type) || TASK_WORD_SPELL.equals(type);
+    }
+
     public boolean isWordTask() {
-        return TASK_WORD_SPELL.equals(taskType);
+        return isWordTask(taskType);
+    }
+
+    /** 当前应使用的词库：优先闹钟自带 bookId，否则用全局设置。 */
+    public String effectiveBook(Context ctx) {
+        String book = wordBookId;
+        if (book == null || book.trim().isEmpty()) book = WordStore.getBook(ctx);
+        return WordStore.normalizeBook(book);
     }
 
     /** 闹钟列表里的摘要：20 个开合跳 / 10 个单词 · 四级 */
@@ -112,6 +126,7 @@ public class Alarm {
             o.put("reps", targetReps);
             o.put("words", targetWords);
             o.put("task", taskType);
+            if (wordBookId != null && !wordBookId.isEmpty()) o.put("wordBook", wordBookId);
         } catch (JSONException ignored) {
         }
         return o;
@@ -127,8 +142,10 @@ public class Alarm {
         a.targetReps = o.optInt("reps", 20);
         a.targetWords = o.optInt("words", 10);
         // 旧版本字段名是 exercise，读不到 task 时按开合跳处理
-        a.taskType = o.optString("task", o.optString("exercise", TASK_JUMPING_JACK));
-        if (!TASK_WORD_SPELL.equals(a.taskType)) a.taskType = TASK_JUMPING_JACK;
+        String task = o.optString("task", o.optString("exercise", TASK_JUMPING_JACK));
+        a.taskType = isWordTask(task) ? task : TASK_JUMPING_JACK;
+        String book = o.optString("wordBook", "");
+        a.wordBookId = book.isEmpty() ? null : book;
         return a;
     }
 

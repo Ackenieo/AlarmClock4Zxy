@@ -63,6 +63,8 @@ public class AlarmService extends Service {
     private static final String KEY_TASK = "task";
     private static final String KEY_WORDS = "words";
     private static final String KEY_WORD_START = "word_start";
+    private static final String KEY_WORD_BOOK = "word_book";
+    private static final String KEY_WORD_SESSION = "word_session";
 
     /** 硬兜底：连续响满 30 分钟自动停止 */
     private static final long MAX_RING_MILLIS = 30 * 60 * 1000L;
@@ -77,6 +79,8 @@ public class AlarmService extends Service {
     public static final String EXTRA_TASK = "task";
     public static final String EXTRA_WORDS = "words";
     public static final String EXTRA_WORD_START = "word_start";
+    public static final String EXTRA_WORD_BOOK = "word_book";
+    public static final String EXTRA_WORD_SESSION = "word_session";
 
     /** 供界面判断当前是否正在响铃 */
     public static volatile boolean ringing = false;
@@ -108,6 +112,8 @@ public class AlarmService extends Service {
     private String taskType = Alarm.TASK_JUMPING_JACK;
     private int targetWords = 10;
     private int wordStart = 0;
+    private String wordBook = WordStore.BOOK_CET4;
+    private String wordSessionId = "";
     /** 墙钟截止时间：SystemClock.elapsedRealtime 会随重启归零，用 currentTimeMillis 才扛得住进程重启 */
     private long deadlineAt = 0L;
 
@@ -120,8 +126,9 @@ public class AlarmService extends Service {
         i.putExtra(EXTRA_TASK, alarm.taskType);
         i.putExtra(EXTRA_WORDS, alarm.targetWords);
         if (alarm.isWordTask()) {
-            i.putExtra(EXTRA_WORD_START,
-                    WordStore.nextIndex(ctx, WordStore.getBook(ctx)));
+            String book = alarm.effectiveBook(ctx);
+            i.putExtra(EXTRA_WORD_BOOK, book);
+            i.putExtra(EXTRA_WORD_START, WordStore.nextIndex(ctx, book));
         }
         return i;
     }
@@ -156,9 +163,15 @@ public class AlarmService extends Service {
             label = intent.getStringExtra(EXTRA_LABEL);
             if (label == null) label = "";
             taskType = intent.getStringExtra(EXTRA_TASK);
-            if (!Alarm.TASK_WORD_SPELL.equals(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
+            if (!Alarm.isWordTask(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
             targetWords = intent.getIntExtra(EXTRA_WORDS, 10);
             wordStart = intent.getIntExtra(EXTRA_WORD_START, 0);
+            wordBook = intent.getStringExtra(EXTRA_WORD_BOOK);
+            if (wordBook == null || wordBook.isEmpty()) {
+                wordBook = WordStore.getBook(this);
+            }
+            wordBook = WordStore.normalizeBook(wordBook);
+            wordSessionId = String.valueOf(System.currentTimeMillis());
             timedOut = false;
             deadlineAt = System.currentTimeMillis() + MAX_RING_MILLIS;
         } else if (alarmId < 0 && !restoreState()) {
@@ -364,7 +377,9 @@ public class AlarmService extends Service {
                 .putExtra(EXTRA_LABEL, label)
                 .putExtra(EXTRA_TASK, taskType)
                 .putExtra(EXTRA_WORDS, targetWords)
-                .putExtra(EXTRA_WORD_START, wordStart);
+                .putExtra(EXTRA_WORD_START, wordStart)
+                .putExtra(EXTRA_WORD_BOOK, wordBook)
+                .putExtra(EXTRA_WORD_SESSION, wordSessionId);
         try {
             startActivity(i);
         } catch (Exception e) {
@@ -387,12 +402,14 @@ public class AlarmService extends Service {
                 .putExtra(EXTRA_LABEL, label)
                 .putExtra(EXTRA_TASK, taskType)
                 .putExtra(EXTRA_WORDS, targetWords)
-                .putExtra(EXTRA_WORD_START, wordStart);
+                .putExtra(EXTRA_WORD_START, wordStart)
+                .putExtra(EXTRA_WORD_BOOK, wordBook)
+                .putExtra(EXTRA_WORD_SESSION, wordSessionId);
         PendingIntent fullPi = PendingIntent.getActivity(this, 1, full,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         String title = getString(R.string.ringing_title) + (label.isEmpty() ? "" : " · " + label);
-        String text = Alarm.TASK_WORD_SPELL.equals(taskType)
+        String text = Alarm.isWordTask(taskType)
                 ? getString(R.string.ringing_words_fmt, targetWords)
                 : getString(R.string.ringing_reps_fmt, reps);
 
@@ -438,6 +455,8 @@ public class AlarmService extends Service {
                 .putString(KEY_TASK, taskType)
                 .putInt(KEY_WORDS, targetWords)
                 .putInt(KEY_WORD_START, wordStart)
+                .putString(KEY_WORD_BOOK, wordBook)
+                .putString(KEY_WORD_SESSION, wordSessionId)
                 .apply();
     }
 
@@ -454,9 +473,14 @@ public class AlarmService extends Service {
         label = p.getString(KEY_LABEL, "");
         if (label == null) label = "";
         taskType = p.getString(KEY_TASK, Alarm.TASK_JUMPING_JACK);
-        if (!Alarm.TASK_WORD_SPELL.equals(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
+        if (!Alarm.isWordTask(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
         targetWords = p.getInt(KEY_WORDS, 10);
         wordStart = p.getInt(KEY_WORD_START, 0);
+        wordBook = WordStore.normalizeBook(p.getString(KEY_WORD_BOOK, WordStore.BOOK_CET4));
+        wordSessionId = p.getString(KEY_WORD_SESSION, "");
+        if (wordSessionId == null || wordSessionId.isEmpty()) {
+            wordSessionId = String.valueOf(System.currentTimeMillis());
+        }
         deadlineAt = deadline;
         return true;
     }

@@ -35,6 +35,8 @@ public class RingingActivity extends AppCompatActivity {
     private int reps = 20;
     private int targetWords = 10;
     private int wordStart = 0;
+    private String wordBook = WordStore.BOOK_CET4;
+    private String wordSessionId = "";
     private String taskType = Alarm.TASK_JUMPING_JACK;
     private long alarmId = -1L;
 
@@ -90,10 +92,13 @@ public class RingingActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_start).setOnClickListener(v -> {
             Intent i;
-            if (Alarm.TASK_WORD_SPELL.equals(taskType)) {
+            if (Alarm.isWordTask(taskType)) {
                 i = new Intent(this, WordSpellActivity.class);
+                i.putExtra(AlarmService.EXTRA_TASK, taskType);
                 i.putExtra(AlarmService.EXTRA_WORDS, targetWords);
                 i.putExtra(AlarmService.EXTRA_WORD_START, wordStart);
+                i.putExtra(AlarmService.EXTRA_WORD_BOOK, wordBook);
+                i.putExtra(AlarmService.EXTRA_WORD_SESSION, wordSessionId);
             } else {
                 i = new Intent(this, ExerciseActivity.class);
                 i.putExtra(AlarmService.EXTRA_REPS, reps);
@@ -111,7 +116,7 @@ public class RingingActivity extends AppCompatActivity {
                     @Override
                     public void handleOnBackPressed() {
                         Toast.makeText(RingingActivity.this,
-                                Alarm.TASK_WORD_SPELL.equals(taskType)
+                                Alarm.isWordTask(taskType)
                                         ? R.string.ringing_word_back_hint
                                         : R.string.ringing_back_hint,
                                 Toast.LENGTH_SHORT).show();
@@ -128,10 +133,14 @@ public class RingingActivity extends AppCompatActivity {
         reps = intent.getIntExtra(AlarmService.EXTRA_REPS, 20);
         targetWords = intent.getIntExtra(AlarmService.EXTRA_WORDS, 10);
         wordStart = intent.getIntExtra(AlarmService.EXTRA_WORD_START, 0);
+        wordBook = intent.getStringExtra(AlarmService.EXTRA_WORD_BOOK);
+        if (wordBook == null || wordBook.isEmpty()) wordBook = WordStore.getBook(this);
+        wordSessionId = intent.getStringExtra(AlarmService.EXTRA_WORD_SESSION);
+        if (wordSessionId == null) wordSessionId = "";
         taskType = intent.getStringExtra(AlarmService.EXTRA_TASK);
-        if (!Alarm.TASK_WORD_SPELL.equals(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
+        if (!Alarm.isWordTask(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
         alarmId = intent.getLongExtra(AlarmService.EXTRA_ID, -1L);
-        repsText.setText(Alarm.TASK_WORD_SPELL.equals(taskType)
+        repsText.setText(Alarm.isWordTask(taskType)
                 ? getString(R.string.ringing_words_fmt, targetWords)
                 : getString(R.string.ringing_reps_fmt, reps));
     }
@@ -185,9 +194,13 @@ public class RingingActivity extends AppCompatActivity {
         if (AlarmService.vibrationBoost) {
             hint.setText(R.string.ringing_vibration_boost);
         } else {
-            hint.setText(Alarm.TASK_WORD_SPELL.equals(taskType)
-                    ? R.string.ringing_word_hint
-                    : R.string.ringing_hint);
+            if (Alarm.isWordTask(taskType)) {
+                hint.setText(Alarm.TASK_WORD_CHOICE.equals(taskType)
+                        ? R.string.ringing_choice_hint
+                        : R.string.ringing_word_hint);
+            } else {
+                hint.setText(R.string.ringing_hint);
+            }
         }
     }
 

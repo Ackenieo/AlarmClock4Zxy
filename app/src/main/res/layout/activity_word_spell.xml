@@ -22,76 +22,181 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-        <TextView
-            android:id="@+id/word_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/word_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
 
-        <com.example.alarmclock4jacw.RingProgressView
-            android:id="@+id/word_ring"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="12dp" />
+            <com.example.alarmclock4jacw.RingProgressView
+                android:id="@+id/word_ring"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="12dp" />
 
-        <TextView
-            android:id="@+id/word_meaning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_card"
-            android:gravity="center"
-            android:minHeight="128dp"
-            android:padding="24dp"
-            android:textColor="@color/text_primary"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
 
-        <TextView
-            android:id="@+id/word_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:text="@string/word_hint_default"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/word_meaning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card"
+                    android:gravity="center"
+                    android:minHeight="128dp"
+                    android:paddingStart="24dp"
+                    android:paddingTop="24dp"
+                    android:paddingEnd="64dp"
+                    android:paddingBottom="24dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-        <com.example.alarmclock4jacw.SpellingEditText
-            android:id="@+id/word_input"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/bg_input"
-            android:hint="@string/word_input_hint"
-            android:imeOptions="actionDone"
-            android:inputType="textVisiblePassword|textNoSuggestions"
-            android:maxLength="40"
-            android:paddingStart="18dp"
-            android:paddingEnd="18dp"
-            android:singleLine="true"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_tertiary"
-            android:textSize="20sp" />
+                <ImageButton
+                    android:id="@+id/btn_speak"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_circle_button"
+                    android:contentDescription="@string/word_play"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_volume"
+                    android:tint="@color/text_primary" />
+            </FrameLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_word_submit"
-            style="@style/Widget.PrimaryButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="14dp"
-            android:text="@string/word_submit" />
+            <TextView
+                android:id="@+id/word_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/word_hint_default"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/word_good"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:text="@string/word_good"
-            android:textColor="@color/mint"
-            android:textSize="44sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/choice_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/option_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_option"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="64dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/option_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_option"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="64dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/option_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_option"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="64dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/option_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_option"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="64dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/spell_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.example.alarmclock4jacw.SpellingEditText
+                    android:id="@+id/word_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_input"
+                    android:hint="@string/word_input_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="textVisiblePassword|textNoSuggestions"
+                    android:maxLength="40"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_tertiary"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_word_submit"
+                    style="@style/Widget.PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/word_submit" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/word_good"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="@string/word_good"
+                android:textColor="@color/mint"
+                android:textSize="44sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
