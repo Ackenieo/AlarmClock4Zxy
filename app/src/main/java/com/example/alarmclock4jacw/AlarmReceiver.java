@@ -16,6 +16,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     public static final String ACTION_TEST = "com.example.alarmclock4jacw.action.TEST";
     public static final String EXTRA_ID = "alarm_id";
     public static final String EXTRA_REPS = "reps";
+    public static final String EXTRA_TASK = "task";
+    public static final String EXTRA_WORDS = "words";
     private static final String TAG = "AlarmReceiver";
 
     @Override
@@ -31,6 +33,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             Alarm fake = new Alarm();
             fake.id = -1L;
             fake.targetReps = intent.getIntExtra(EXTRA_REPS, 10);
+            fake.taskType = intent.getStringExtra(EXTRA_TASK);
+            if (!Alarm.TASK_WORD_SPELL.equals(fake.taskType)) fake.taskType = Alarm.TASK_JUMPING_JACK;
+            fake.targetWords = intent.getIntExtra(EXTRA_WORDS, 10);
             java.util.Calendar c = java.util.Calendar.getInstance();
             fake.hour = c.get(java.util.Calendar.HOUR_OF_DAY);
             fake.minute = c.get(java.util.Calendar.MINUTE);

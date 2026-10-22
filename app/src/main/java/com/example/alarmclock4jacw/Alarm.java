@@ -14,7 +14,8 @@ import java.util.Locale;
  */
 public class Alarm {
 
-    public static final String EXERCISE_JUMPING_JACK = "JUMPING_JACK";
+    public static final String TASK_JUMPING_JACK = "JUMPING_JACK";
+    public static final String TASK_WORD_SPELL = "WORD_SPELL";
 
     public long id;
     public int hour;
@@ -22,7 +23,8 @@ public class Alarm {
     public boolean enabled = true;
     public int repeatMask = 0;
     public int targetReps = 20;
-    public String exercise = EXERCISE_JUMPING_JACK;
+    public int targetWords = 10;
+    public String taskType = TASK_JUMPING_JACK;
 
     public Alarm() {
         this.id = System.currentTimeMillis();
@@ -30,6 +32,26 @@ public class Alarm {
 
     public boolean repeats() {
         return repeatMask != 0;
+    }
+
+    public boolean isWordTask() {
+        return TASK_WORD_SPELL.equals(taskType);
+    }
+
+    /** 闹钟列表里的摘要：20 个开合跳 / 10 个单词 · 四级 */
+    public String taskSummary(Context ctx) {
+        if (isWordTask()) {
+            return ctx.getString(R.string.word_summary_fmt, targetWords, WordStore.bookLabel(ctx));
+        }
+        return ctx.getString(R.string.reps_value_fmt, targetReps)
+                + ctx.getString(R.string.exercise_jumping_jack);
+    }
+
+    /** 响铃页/通知里的目标文案 */
+    public String ringingText(Context ctx) {
+        return isWordTask()
+                ? ctx.getString(R.string.ringing_words_fmt, targetWords)
+                : ctx.getString(R.string.ringing_reps_fmt, targetReps);
     }
 
     public String timeText() {
@@ -88,7 +110,8 @@ public class Alarm {
             o.put("enabled", enabled);
             o.put("repeat", repeatMask);
             o.put("reps", targetReps);
-            o.put("exercise", exercise);
+            o.put("words", targetWords);
+            o.put("task", taskType);
         } catch (JSONException ignored) {
         }
         return o;
@@ -102,7 +125,10 @@ public class Alarm {
         a.enabled = o.optBoolean("enabled", true);
         a.repeatMask = o.optInt("repeat", 0);
         a.targetReps = o.optInt("reps", 20);
-        a.exercise = o.optString("exercise", EXERCISE_JUMPING_JACK);
+        a.targetWords = o.optInt("words", 10);
+        // 旧版本字段名是 exercise，读不到 task 时按开合跳处理
+        a.taskType = o.optString("task", o.optString("exercise", TASK_JUMPING_JACK));
+        if (!TASK_WORD_SPELL.equals(a.taskType)) a.taskType = TASK_JUMPING_JACK;
         return a;
     }
 

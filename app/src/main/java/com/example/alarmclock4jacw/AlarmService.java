@@ -60,6 +60,9 @@ public class AlarmService extends Service {
     private static final String KEY_REPS = "reps";
     private static final String KEY_LABEL = "label";
     private static final String KEY_DEADLINE = "deadline";
+    private static final String KEY_TASK = "task";
+    private static final String KEY_WORDS = "words";
+    private static final String KEY_WORD_START = "word_start";
 
     /** 硬兜底：连续响满 30 分钟自动停止 */
     private static final long MAX_RING_MILLIS = 30 * 60 * 1000L;
@@ -71,11 +74,16 @@ public class AlarmService extends Service {
     public static final String EXTRA_ID = "alarm_id";
     public static final String EXTRA_REPS = "reps";
     public static final String EXTRA_LABEL = "label";
+    public static final String EXTRA_TASK = "task";
+    public static final String EXTRA_WORDS = "words";
+    public static final String EXTRA_WORD_START = "word_start";
 
     /** 供界面判断当前是否正在响铃 */
     public static volatile boolean ringing = false;
     /** 免打扰 / 静音命中，已切强震动，供界面提示 */
     public static volatile boolean vibrationBoost = false;
+    /** 是否由 30 分钟硬兜底停止，供界面决定要不要提示超时 */
+    public static volatile boolean timedOut = false;
 
     private static volatile boolean uiVisible = false;
     private static volatile long lastUiSeenAt = 0L;
@@ -97,6 +105,9 @@ public class AlarmService extends Service {
     private long alarmId = -1L;
     private int reps = 20;
     private String label = "";
+    private String taskType = Alarm.TASK_JUMPING_JACK;
+    private int targetWords = 10;
+    private int wordStart = 0;
     /** 墙钟截止时间：SystemClock.elapsedRealtime 会随重启归零，用 currentTimeMillis 才扛得住进程重启 */
     private long deadlineAt = 0L;
 
@@ -106,6 +117,12 @@ public class AlarmService extends Service {
         i.putExtra(EXTRA_ID, alarm.id);
         i.putExtra(EXTRA_REPS, alarm.targetReps);
         i.putExtra(EXTRA_LABEL, alarm.timeText());
+        i.putExtra(EXTRA_TASK, alarm.taskType);
+        i.putExtra(EXTRA_WORDS, alarm.targetWords);
+        if (alarm.isWordTask()) {
+            i.putExtra(EXTRA_WORD_START,
+                    WordStore.nextIndex(ctx, WordStore.getBook(ctx)));
+        }
         return i;
     }
 
@@ -138,6 +155,11 @@ public class AlarmService extends Service {
             reps = intent.getIntExtra(EXTRA_REPS, 20);
             label = intent.getStringExtra(EXTRA_LABEL);
             if (label == null) label = "";
+            taskType = intent.getStringExtra(EXTRA_TASK);
+            if (!Alarm.TASK_WORD_SPELL.equals(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
+            targetWords = intent.getIntExtra(EXTRA_WORDS, 10);
+            wordStart = intent.getIntExtra(EXTRA_WORD_START, 0);
+            timedOut = false;
             deadlineAt = System.currentTimeMillis() + MAX_RING_MILLIS;
         } else if (alarmId < 0 && !restoreState()) {
             // START_STICKY 重启但找不到原始会话：不要凭空响一个不存在的闹钟
@@ -195,6 +217,7 @@ public class AlarmService extends Service {
 
             if (System.currentTimeMillis() >= deadlineAt) {
                 Log.i(TAG, "ring deadline reached, auto-stop as the last resort");
+                timedOut = true;
                 stopRinging();
                 return;
             }
@@ -338,7 +361,10 @@ public class AlarmService extends Service {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .putExtra(EXTRA_ID, alarmId)
                 .putExtra(EXTRA_REPS, reps)
-                .putExtra(EXTRA_LABEL, label);
+                .putExtra(EXTRA_LABEL, label)
+                .putExtra(EXTRA_TASK, taskType)
+                .putExtra(EXTRA_WORDS, targetWords)
+                .putExtra(EXTRA_WORD_START, wordStart);
         try {
             startActivity(i);
         } catch (Exception e) {
@@ -358,12 +384,17 @@ public class AlarmService extends Service {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .putExtra(EXTRA_ID, alarmId)
                 .putExtra(EXTRA_REPS, reps)
-                .putExtra(EXTRA_LABEL, label);
+                .putExtra(EXTRA_LABEL, label)
+                .putExtra(EXTRA_TASK, taskType)
+                .putExtra(EXTRA_WORDS, targetWords)
+                .putExtra(EXTRA_WORD_START, wordStart);
         PendingIntent fullPi = PendingIntent.getActivity(this, 1, full,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         String title = getString(R.string.ringing_title) + (label.isEmpty() ? "" : " · " + label);
-        String text = getString(R.string.ringing_reps_fmt, reps);
+        String text = Alarm.TASK_WORD_SPELL.equals(taskType)
+                ? getString(R.string.ringing_words_fmt, targetWords)
+                : getString(R.string.ringing_reps_fmt, reps);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_alarm)
@@ -404,6 +435,9 @@ public class AlarmService extends Service {
                 .putInt(KEY_REPS, reps)
                 .putString(KEY_LABEL, label)
                 .putLong(KEY_DEADLINE, deadlineAt)
+                .putString(KEY_TASK, taskType)
+                .putInt(KEY_WORDS, targetWords)
+                .putInt(KEY_WORD_START, wordStart)
                 .apply();
     }
 
@@ -419,6 +453,10 @@ public class AlarmService extends Service {
         reps = p.getInt(KEY_REPS, 20);
         label = p.getString(KEY_LABEL, "");
         if (label == null) label = "";
+        taskType = p.getString(KEY_TASK, Alarm.TASK_JUMPING_JACK);
+        if (!Alarm.TASK_WORD_SPELL.equals(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
+        targetWords = p.getInt(KEY_WORDS, 10);
+        wordStart = p.getInt(KEY_WORD_START, 0);
         deadlineAt = deadline;
         return true;
     }

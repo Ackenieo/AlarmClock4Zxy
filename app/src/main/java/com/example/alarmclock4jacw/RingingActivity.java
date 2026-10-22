@@ -33,6 +33,9 @@ public class RingingActivity extends AppCompatActivity {
     private TextView repsText;
     private TextView hint;
     private int reps = 20;
+    private int targetWords = 10;
+    private int wordStart = 0;
+    private String taskType = Alarm.TASK_JUMPING_JACK;
     private long alarmId = -1L;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -43,7 +46,9 @@ public class RingingActivity extends AppCompatActivity {
             updateHint();
             // 服务侧 30 分钟兜底停止后，界面自己收掉；锁定任务必须先退出，否则设备会留在锁死状态
             if (!AlarmService.ringing) {
-                Toast.makeText(RingingActivity.this, R.string.ringing_timeout, Toast.LENGTH_LONG).show();
+                if (AlarmService.timedOut) {
+                    Toast.makeText(RingingActivity.this, R.string.ringing_timeout, Toast.LENGTH_LONG).show();
+                }
                 closeAndUnlock();
                 return;
             }
@@ -84,8 +89,15 @@ public class RingingActivity extends AppCompatActivity {
                 });
 
         findViewById(R.id.btn_start).setOnClickListener(v -> {
-            Intent i = new Intent(this, ExerciseActivity.class);
-            i.putExtra(AlarmService.EXTRA_REPS, reps);
+            Intent i;
+            if (Alarm.TASK_WORD_SPELL.equals(taskType)) {
+                i = new Intent(this, WordSpellActivity.class);
+                i.putExtra(AlarmService.EXTRA_WORDS, targetWords);
+                i.putExtra(AlarmService.EXTRA_WORD_START, wordStart);
+            } else {
+                i = new Intent(this, ExerciseActivity.class);
+                i.putExtra(AlarmService.EXTRA_REPS, reps);
+            }
             i.putExtra(AlarmService.EXTRA_ID, alarmId);
             exerciseLauncher.launch(i);
         });
@@ -98,7 +110,10 @@ public class RingingActivity extends AppCompatActivity {
                 new androidx.activity.OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
-                        Toast.makeText(RingingActivity.this, R.string.ringing_back_hint,
+                        Toast.makeText(RingingActivity.this,
+                                Alarm.TASK_WORD_SPELL.equals(taskType)
+                                        ? R.string.ringing_word_back_hint
+                                        : R.string.ringing_back_hint,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -111,8 +126,14 @@ public class RingingActivity extends AppCompatActivity {
     private void applyIntent(Intent intent) {
         if (intent == null) return;
         reps = intent.getIntExtra(AlarmService.EXTRA_REPS, 20);
+        targetWords = intent.getIntExtra(AlarmService.EXTRA_WORDS, 10);
+        wordStart = intent.getIntExtra(AlarmService.EXTRA_WORD_START, 0);
+        taskType = intent.getStringExtra(AlarmService.EXTRA_TASK);
+        if (!Alarm.TASK_WORD_SPELL.equals(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
         alarmId = intent.getLongExtra(AlarmService.EXTRA_ID, -1L);
-        repsText.setText(getString(R.string.ringing_reps_fmt, reps));
+        repsText.setText(Alarm.TASK_WORD_SPELL.equals(taskType)
+                ? getString(R.string.ringing_words_fmt, targetWords)
+                : getString(R.string.ringing_reps_fmt, reps));
     }
 
     @Override
@@ -161,9 +182,13 @@ public class RingingActivity extends AppCompatActivity {
 
     /** 免打扰/静音命中时，把提示换成「已切强震动」，让用户知道响铃没坏 */
     private void updateHint() {
-        hint.setText(AlarmService.vibrationBoost
-                ? R.string.ringing_vibration_boost
-                : R.string.ringing_hint);
+        if (AlarmService.vibrationBoost) {
+            hint.setText(R.string.ringing_vibration_boost);
+        } else {
+            hint.setText(Alarm.TASK_WORD_SPELL.equals(taskType)
+                    ? R.string.ringing_word_hint
+                    : R.string.ringing_hint);
+        }
     }
 
     private void hideSystemBars() {

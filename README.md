@@ -16,7 +16,10 @@
 | 能力    | 说明                                                                    |
 | ----- | --------------------------------------------------------------------- |
 | 闹钟管理  | 添加 / 编辑 / 删除 / 启停；精确到分钟；支持按周重复（任选星期几）                                 |
-| 目标次数  | 5~60 个，滑块调节，默认 20                                                     |
+| 任务类型  | 开合跳 / 背单词；编辑页横向滑动卡片，点击选中（深蹲、俯卧撑敬请期待）                          |
+| 目标数量  | 开合跳 5~60 个（默认 20）；背单词 5~60 个（默认 10）                                   |
+| 背单词任务 | 看中文释义拼出英文；3 次错给首字母、5 次错给字母数、10 次错显示答案并跳到下一个                    |
+| 词库      | 内置四级（3846 词）/ 六级（5406 词）完整词表，全局选择，按固定顺序推进并记录进度                    |
 | 精确响铃  | `AlarmManager.setAlarmClock()`，不受 Doze 影响，状态栏显示闹钟图标                   |
 | 锁屏全屏  | 前台服务 + 高优先级通知 + `fullScreenIntent`，息屏/锁屏时直接点亮屏幕跳到响铃页                  |
 | 声音与振动 | 自带的循环铃声（`res/raw/alarm_beep.wav`，44.1kHz 生成）+ 波形振动，走 `USAGE_ALARM` 通道；音量锁定最大 |
@@ -37,7 +40,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 - `minSdk 26 / targetSdk 37 / Java 11`
 - 首次启动会申请通知权限；Android 14+ 还会引导开启「全屏通知」（见下）
-- 添加闹钟后长按首页标题可打开调试工具：**10 秒后测试响铃**、**用测试视频验证识别**
+- 添加闹钟后长按首页标题可打开调试工具：**10 秒后测试响铃**、**10 秒后背单词测试响铃**、**用测试视频验证识别**
 
 ## 3. 关键实现
 
@@ -172,9 +175,13 @@ adb shell dpm remove-active-admin com.example.alarmclock4jacw/.AlarmDeviceAdminR
 ```
 app/src/main/java/com/example/alarmclock4jacw/
 ├── MainActivity.java          闹钟列表 / 权限引导 / 调试入口
-├── AlarmEditActivity.java     时间、重复、次数编辑
+├── AlarmEditActivity.java     时间、重复、任务类型与目标数量编辑
 ├── RingingActivity.java       锁屏响铃页（无关闭入口，拦音量键与返回键）
 ├── ExerciseActivity.java      CameraX + ML Kit 实时识别（无退出入口）
+├── WordSpellActivity.java     背单词拼写页（提示 / good! / 复习列表）
+├── WordStore.java             词库读取、全局词库选择与顺序进度
+├── Word.java                  单词模型、答案归一化、顺序抽词
+├── SpellingEditText.java      禁联想 / 禁粘贴的拼写输入框
 ├── Alarm.java                 闹钟模型（含下次触发时间计算）
 ├── AlarmStore.java            SharedPreferences + JSON 持久化
 ├── AlarmScheduler.java        AlarmManager 精确调度
@@ -191,9 +198,17 @@ app/src/main/java/com/example/alarmclock4jacw/
 └── VideoTestActivity.java     视频回放验证（调试）
 ```
 
+### 5.1 词库来源与许可证
+
+`app/src/main/assets/words_cet4.json` 与 `words_cet6.json` 由 **ECDICT** 生成：
+
+- 项目：<https://github.com/skywind3000/ECDICT>
+- 许可证：**MIT**
+- 处理方式：按 `tag` 中的 `cet4` / `cet6` 筛出词条，只保留英文单词与最多 3 条常用中文释义，按词频排序后打包进 APK，离线可用。
+
 ## 6. 已知限制 / 后续
 
-- 只有开合跳。深蹲、俯卧撑的 UI 位置已留好，接入时只需再写一个 `Counter`（同样吃 `Landmarks`）。
+- 开合跳和背单词可用；深蹲、俯卧撑的 UI 位置已留好，接入时只需再写一个 `Counter`（同样吃 `Landmarks`）。
 - 前置摄像头需要拍到全身：建议把手机横放在床头柜或立在桌上，退后 2~3 米。太近会提示"请后退"。
 - 强光/逆光下骨骼点会丢失，此时界面会提示"没看到人"，不会误计数。
 - 未做"多次运动累计/多闹钟队列"等进阶玩法。
