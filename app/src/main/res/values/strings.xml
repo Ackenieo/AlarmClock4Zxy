@@ -28,8 +28,20 @@
     <string name="cancel">取消</string>
     <string name="delete_confirm">删除后无法恢复，确定删除这个闹钟吗？</string>
     <string name="repeat_label">重复</string>
-    <string name="exercise_label">运动类型</string>
+    <string name="exercise_label">任务类型</string>
     <string name="reps_label">目标次数</string>
+    <string name="word_task_name">背单词</string>
+    <string name="word_task_tag">拼写</string>
+    <string name="word_count_label">目标单词数</string>
+    <string name="word_count_fmt">%1$d 个</string>
+    <string name="word_count_value_fmt">%1$d 个单词</string>
+    <string name="word_book_label">词库</string>
+    <string name="word_book_global_fmt">%1$s · 全局</string>
+    <string name="word_book_dialog_title">选择词库（全局设置）</string>
+    <string name="word_book_cet4">四级</string>
+    <string name="word_book_cet6">六级</string>
+    <string name="word_list_unavailable">词库加载失败，暂时无法选择该任务</string>
+    <string name="word_summary_fmt">%1$d 个单词 · %2$s</string>
     <string name="reps_unit">个</string>
     <string name="reps_value_fmt">%1$d 个</string>
     <string name="once">仅一次</string>
@@ -43,12 +55,27 @@
 
     <string name="ringing_title">该起床了</string>
     <string name="ringing_reps_fmt">完成 %1$d 个开合跳才能关闭闹钟</string>
+    <string name="ringing_words_fmt">完成 %1$d 个单词拼写才能关闭闹钟</string>
     <string name="ringing_start">开始挑战</string>
     <string name="ringing_hint">打开摄像头，AI 会数你做了几个</string>
+    <string name="ringing_word_hint">看中文，把英文单词拼出来</string>
     <string name="ringing_back_hint">先完成运动，闹钟才会停</string>
+    <string name="ringing_word_back_hint">先拼完单词，闹钟才会停</string>
     <string name="ringing_volume_locked">闹钟音量已锁定最大</string>
     <string name="ringing_vibration_boost">检测到免打扰 / 静音，已切到强震动</string>
     <string name="ringing_timeout">连续响铃满 30 分钟，闹钟已自动停止</string>
+
+    <string name="word_page_fmt">第 %1$d / %2$d 个</string>
+    <string name="word_input_hint">输入英文拼写</string>
+    <string name="word_submit">提交</string>
+    <string name="word_hint_default">看中文，拼出英文单词</string>
+    <string name="word_hint_first_fmt">提示：首字母 %1$s</string>
+    <string name="word_hint_length_fmt">提示：首字母 %1$s · 共 %2$d 个字母</string>
+    <string name="word_answer_fmt">答案：%1$s，已跳到下一个</string>
+    <string name="word_good">good!</string>
+    <string name="word_review_title">完成！</string>
+    <string name="word_review_sub_fmt">本轮背过 %1$d 个单词</string>
+    <string name="word_review_done">完成</string>
 
     <string name="exercise_title">开合跳挑战</string>
     <string name="exercise_prepare">准备</string>
@@ -82,6 +109,7 @@
 
     <string name="debug_menu">调试工具</string>
     <string name="debug_test_10s">10 秒后测试响铃</string>
+    <string name="debug_word_test">10 秒后背单词测试响铃（3 个）</string>
     <string name="debug_video">用测试视频验证识别</string>
     <string name="debug_testing_scheduled">10 秒后响铃</string>
     <string name="video_title">识别算法验证</string>

@@ -68,6 +68,15 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.AlarmClock4jACW.Fullscreen" />
 
+        <!-- 背单词拼写页：竖屏，键盘弹出时压缩布局 -->
+        <activity
+            android:name=".WordSpellActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.AlarmClock4jACW.Fullscreen" />
+
         <!-- 开发调试：用视频验证识别算法 -->
         <activity
             android:name=".VideoTestActivity"

@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         time.setText(alarm.timeText());
         detail.setText(alarm.repeatText(this));
-        reps.setText(getString(R.string.reps_value_fmt, alarm.targetReps) + getString(R.string.exercise_jumping_jack));
+        reps.setText(alarm.taskSummary(this));
 
         row.setAlpha(alarm.enabled ? 1f : 0.45f);
 
@@ -244,12 +244,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDebugMenu() {
-        String[] items = {getString(R.string.debug_test_10s), getString(R.string.debug_video)};
+        String[] items = {getString(R.string.debug_test_10s),
+                getString(R.string.debug_word_test), getString(R.string.debug_video)};
         new AlertDialog.Builder(this)
                 .setTitle(R.string.debug_menu)
                 .setItems(items, (d, which) -> {
                     if (which == 0) {
                         scheduleTestAlarm();
+                    } else if (which == 1) {
+                        scheduleWordTestAlarm();
                     } else {
                         startActivity(new Intent(this, VideoTestActivity.class));
                     }
@@ -264,6 +267,27 @@ public class MainActivity extends AppCompatActivity {
         i.setAction(AlarmReceiver.ACTION_TEST);
         i.putExtra(AlarmReceiver.EXTRA_REPS, 10);
         PendingIntent pi = PendingIntent.getBroadcast(this, 9527, i,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        long at = System.currentTimeMillis() + 10_000L;
+        if (am != null) {
+            try {
+                am.setAlarmClock(new AlarmManager.AlarmClockInfo(at, null), pi);
+            } catch (SecurityException e) {
+                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+            }
+        }
+        Toast.makeText(this, R.string.debug_testing_scheduled, Toast.LENGTH_SHORT).show();
+    }
+
+    /** 10 秒后触发一次背单词测试响铃（3 个单词），便于端到端验证 */
+    private void scheduleWordTestAlarm() {
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent i = new Intent(this, AlarmReceiver.class);
+        i.setAction(AlarmReceiver.ACTION_TEST);
+        i.putExtra(AlarmReceiver.EXTRA_REPS, 10);
+        i.putExtra(AlarmReceiver.EXTRA_WORDS, 3);
+        i.putExtra(AlarmReceiver.EXTRA_TASK, Alarm.TASK_WORD_SPELL);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 9528, i,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         long at = System.currentTimeMillis() + 10_000L;
         if (am != null) {
