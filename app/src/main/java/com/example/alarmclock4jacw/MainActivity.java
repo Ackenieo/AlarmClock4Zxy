@@ -1,6 +1,9 @@
 package com.example.alarmclock4jacw;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,7 +16,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
             showDebugMenu();
             return true;
         });
+
+        // 列表一开始滚动，就把左滑展开的删除按钮收起来
+        ScrollView scroll = findViewById(R.id.alarm_scroll);
+        scroll.setOnScrollChangeListener((v, x, y, oldX, oldY) ->
+                SwipeRevealLayout.closeOpenRow());
 
         requestNotificationPermission();
         checkFullScreenIntent();
@@ -136,17 +147,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private View buildItem(Alarm alarm) {
-        View v = LayoutInflater.from(this).inflate(R.layout.item_alarm, container, false);
-        TextView time = v.findViewById(R.id.time);
-        TextView detail = v.findViewById(R.id.detail);
-        TextView reps = v.findViewById(R.id.reps);
-        MaterialSwitch sw = v.findViewById(R.id.enabled_switch);
+        SwipeRevealLayout row = (SwipeRevealLayout)
+                LayoutInflater.from(this).inflate(R.layout.item_alarm, container, false);
+        TextView time = row.findViewById(R.id.time);
+        TextView detail = row.findViewById(R.id.detail);
+        TextView reps = row.findViewById(R.id.reps);
+        MaterialSwitch sw = row.findViewById(R.id.enabled_switch);
 
         time.setText(alarm.timeText());
         detail.setText(alarm.repeatText(this));
         reps.setText(getString(R.string.reps_value_fmt, alarm.targetReps) + getString(R.string.exercise_jumping_jack));
 
-        v.setAlpha(alarm.enabled ? 1f : 0.45f);
+        row.setAlpha(alarm.enabled ? 1f : 0.45f);
 
         sw.setOnCheckedChangeListener(null);
         sw.setChecked(alarm.enabled);
@@ -154,16 +166,60 @@ public class MainActivity extends AppCompatActivity {
             alarm.enabled = checked;
             store.save(alarm);
             AlarmScheduler.schedule(this, alarm);
-            v.setAlpha(checked ? 1f : 0.45f);
+            row.setAlpha(checked ? 1f : 0.45f);
             updateSubtitle();
         });
 
-        v.setOnClickListener(x -> {
+        row.setOnContentClickListener(x -> {
             Intent i = new Intent(this, AlarmEditActivity.class);
             i.putExtra(AlarmEditActivity.EXTRA_ID, alarm.id);
             editLauncher.launch(i);
         });
-        return v;
+        // 左滑露出垃圾桶，点一下直接删除
+        row.setOnDeleteListener(() -> deleteAlarm(alarm, row));
+        return row;
+    }
+
+    /** 左滑删除：不再二次确认，整行平滑收起后移除 */
+    private void deleteAlarm(Alarm alarm, View row) {
+        store.delete(alarm.id);
+        AlarmScheduler.cancel(this, alarm);
+
+        int height = row.getHeight();
+        float startAlpha = row.getAlpha();
+        if (height <= 0) {
+            container.removeView(row);
+            afterDelete();
+            return;
+        }
+
+        ValueAnimator animator = ValueAnimator.ofFloat(1f, 0f);
+        animator.setDuration(220);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.addUpdateListener(a -> {
+            float f = (float) a.getAnimatedValue();
+            ViewGroup.LayoutParams lp = row.getLayoutParams();
+            lp.height = Math.round(height * f);
+            row.setLayoutParams(lp);
+            row.setAlpha(startAlpha * f);
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                container.removeView(row);
+                afterDelete();
+            }
+        });
+        animator.start();
+    }
+
+    private void afterDelete() {
+        Toast.makeText(this, R.string.toast_alarm_deleted, Toast.LENGTH_SHORT).show();
+        if (store.all().isEmpty()) {
+            render();
+        } else {
+            updateSubtitle();
+        }
     }
 
     /** 把时间戳说成"今天 07:00 / 明天 07:00 / 周三 07:00" */

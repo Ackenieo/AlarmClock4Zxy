@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg">
@@ -10,62 +9,64 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- 大标题 + 右上角圆形加号 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingStart="24dp"
-            android:paddingTop="32dp"
+            android:paddingTop="36dp"
             android:paddingEnd="24dp">
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackground"
-                android:text="@string/app_name"
+                android:letterSpacing="-0.02"
+                android:text="@string/home_title"
                 android:textColor="@color/text_primary"
-                android:textSize="28sp"
+                android:textSize="40sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/subtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/next_alarm_none"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+            <ImageButton
+                android:id="@+id/fab_add"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_circle_button"
+                android:contentDescription="@string/add_alarm"
+                android:scaleType="center"
+                android:src="@drawable/ic_add"
+                android:tint="@color/text_primary" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/next_alarm_none"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
         <ScrollView
+            android:id="@+id/alarm_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingStart="20dp"
-            android:paddingTop="22dp"
-            android:paddingEnd="20dp">
+            android:paddingTop="18dp"
+            android:paddingBottom="40dp">
 
             <LinearLayout
                 android:id="@+id/alarm_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="150dp" />
+                android:orientation="vertical" />
         </ScrollView>
     </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:text="@string/add_alarm"
-        android:textColor="@color/on_accent"
-        app:backgroundTint="@color/accent"
-        app:icon="@drawable/ic_add"
-        app:iconTint="@color/on_accent" />
 
 </FrameLayout>

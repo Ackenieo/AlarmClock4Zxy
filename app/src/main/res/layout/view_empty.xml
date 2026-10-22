@@ -2,27 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
     android:orientation="vertical"
-    android:paddingTop="80dp"
+    android:paddingStart="26dp"
+    android:paddingTop="36dp"
+    android:paddingEnd="26dp"
     android:paddingBottom="40dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/empty_title"
-        android:textColor="@color/text_primary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textColor="@color/text_secondary"
+        android:textSize="17sp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:gravity="center"
         android:lineSpacingExtra="4dp"
         android:text="@string/empty_desc"
-        android:textColor="@color/text_secondary"
+        android:textColor="@color/text_tertiary"
         android:textSize="13sp" />
 
 </LinearLayout>
