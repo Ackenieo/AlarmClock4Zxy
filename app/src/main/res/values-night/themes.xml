@@ -4,7 +4,7 @@
     <!-- 应用本身即为深色（夜间闹钟场景），夜间模式沿用同一套配色 -->
     <style name="Theme.AlarmClock4jACW" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/accent</item>
-        <item name="colorOnPrimary">@color/on_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/accent_deep</item>
         <item name="colorOnPrimaryContainer">@color/white</item>
         <item name="colorSecondary">@color/mint</item>
