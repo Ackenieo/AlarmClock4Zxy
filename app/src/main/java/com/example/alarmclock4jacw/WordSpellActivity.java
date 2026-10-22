@@ -170,7 +170,7 @@ public class WordSpellActivity extends AppCompatActivity {
         index = Math.max(0, Math.min(targetCount, session.cursor));
 
         try {
-            tone = new ToneGenerator(AudioManager.STREAM_ALARM, 80);
+            tone = new ToneGenerator(AudioManager.STREAM_MUSIC, 80);
         } catch (Exception ignored) {
         }
         tts = new TtsSpeaker(this, () -> runOnUiThread(this::showTtsMissingDialog));
@@ -392,12 +392,12 @@ public class WordSpellActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.btn_review_done).setOnClickListener(v -> {
+            AlarmService.stop(this);
             setResult(RESULT_OK);
             finish();
         });
 
-        // 任务完成，立即停止铃声；复习列表留在这里给用户看
-        AlarmService.stop(this);
+        // 铃声继续响，等用户点“完成”后再停止
     }
 
     private boolean isWrongWord(Word word) {
