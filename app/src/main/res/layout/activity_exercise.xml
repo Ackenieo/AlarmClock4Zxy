@@ -82,20 +82,6 @@
             app:backgroundTint="#66000000"
             app:icon="@drawable/ic_camera_flip"
             app:iconTint="@color/white" />
-
-        <Space
-            android:layout_width="12dp"
-            android:layout_height="1dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_quit"
-            style="@style/Widget.GhostButton"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="@string/exercise_quit"
-            android:textColor="@color/white"
-            app:backgroundTint="#66000000" />
     </LinearLayout>
 
     <!-- 相机权限缺失时的兜底 -->
@@ -133,16 +119,6 @@
             android:layout_height="56dp"
             android:layout_marginTop="26dp"
             android:text="@string/exercise_perm_grant" />
-
-        <TextView
-            android:id="@+id/force_exit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:padding="14dp"
-            android:text="@string/exercise_force_hint"
-            android:textColor="@color/text_tertiary"
-            android:textSize="12sp" />
     </LinearLayout>
 
     <!-- 完成 -->

@@ -51,9 +51,11 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:gravity="center"
             android:text="@string/ringing_hint"
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
@@ -71,15 +73,6 @@
             android:layout_width="1dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/btn_emergency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="@string/ringing_emergency_hold"
-            android:textColor="@color/text_tertiary"
-            android:textSize="12sp" />
     </LinearLayout>
 
 </FrameLayout>

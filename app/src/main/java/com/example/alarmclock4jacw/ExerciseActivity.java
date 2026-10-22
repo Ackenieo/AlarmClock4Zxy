@@ -15,7 +15,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.Size;
-import android.view.MotionEvent;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -51,6 +50,9 @@ import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions;
 /**
  * 运动挑战页：CameraX 实时取流 -> ML Kit 骨骼识别 -> 开合跳计数。
  * 达到目标次数后返回 RESULT_OK，响铃页据此关闭闹钟。
+ *
+ * 这一页没有退出按钮，也没有长按强关：做够次数是唯一出口，
+ * 只剩 {@link AlarmService} 的 30 分钟兜底会自动收掉本页。
  */
 public class ExerciseActivity extends AppCompatActivity {
 
@@ -61,7 +63,6 @@ public class ExerciseActivity extends AppCompatActivity {
     private RingProgressView ring;
     private TextView hintView;
     private TextView countdownView;
-    private TextView forceExit;
     private View permissionPanel;
     private View successPanel;
 
@@ -81,7 +82,23 @@ public class ExerciseActivity extends AppCompatActivity {
     private Vibrator vibrator;
 
     private ActivityResultLauncher<String> cameraPermissionLauncher;
-    private int forceCountdown = -1;
+
+    /**
+     * 服务侧 30 分钟兜底停止后收掉本页。
+     * 不返回 RESULT_OK：闹钟已经由服务自行停止，响铃页不该再发一次停止指令。
+     */
+    private final Runnable guard = new Runnable() {
+        @Override
+        public void run() {
+            if (!AlarmService.ringing && !finished) {
+                finished = true;
+                if (analysis != null) analysis.clearAnalyzer();
+                finish();
+                return;
+            }
+            handler.postDelayed(this, 1000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +115,6 @@ public class ExerciseActivity extends AppCompatActivity {
         ring = findViewById(R.id.ring);
         hintView = findViewById(R.id.hint);
         countdownView = findViewById(R.id.countdown);
-        forceExit = findViewById(R.id.force_exit);
         permissionPanel = findViewById(R.id.permission_panel);
         successPanel = findViewById(R.id.success_panel);
 
@@ -124,9 +140,7 @@ public class ExerciseActivity extends AppCompatActivity {
             useFront = !useFront;
             bindUseCases();
         });
-        findViewById(R.id.btn_quit).setOnClickListener(v -> confirmQuit());
         findViewById(R.id.btn_grant).setOnClickListener(v -> requestCameraPermission());
-        setupForceExit();
 
         // 调试包专用：长按进度环直接判定完成，方便在没有真人的环境（模拟器/演示）里跑通整条链路。
         // release 包里 BuildConfig.DEBUG 为 false，这个入口不存在。
@@ -366,65 +380,35 @@ public class ExerciseActivity extends AppCompatActivity {
         vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
-    private void confirmQuit() {
-        new AlertDialog.Builder(this)
-                .setMessage(R.string.exercise_quit_confirm)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.exercise_quit, (d, w) -> {
-                    setResult(RESULT_CANCELED);
-                    finish();
-                })
-                .show();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AlarmService.uiSeen();
+        handler.removeCallbacks(guard);
+        handler.postDelayed(guard, 1000);
     }
 
-    /**
-     * 兜底出口：相机权限拿不到时，长按 10 秒才能强制关闭，
-     * 避免闹钟把手机彻底锁死。
-     */
-    private void setupForceExit() {
-        forceExit.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    startForceCountdown();
-                    return true;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    cancelForceCountdown();
-                    return true;
-                default:
-                    return false;
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AlarmService.uiHidden();
+        handler.removeCallbacks(guard);
     }
 
-    private final Runnable forceTick = new Runnable() {
-        @Override
-        public void run() {
-            if (forceCountdown < 0) return;
-            if (forceCountdown == 0) {
-                forceExit.setText(R.string.exercise_force_hint);
-                forceCountdown = -1;
-                setResult(RESULT_OK);
-                finish();
-                return;
-            }
-            forceExit.setText(getString(R.string.exercise_force_progress, forceCountdown));
-            forceCountdown--;
-            handler.postDelayed(this, 1000);
-        }
-    };
-
-    private void startForceCountdown() {
-        if (forceCountdown >= 0) return;
-        forceCountdown = 10;
-        handler.post(forceTick);
+    /** 运动时手会碰到音量键，同样不让它把声音调小 */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return VolumeKeyGuard.onKeyDown(this, keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
-    private void cancelForceCountdown() {
-        if (forceCountdown < 0) return;
-        forceCountdown = -1;
-        handler.removeCallbacks(forceTick);
-        forceExit.setText(R.string.exercise_force_hint);
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return VolumeKeyGuard.swallow(keyCode) || super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return VolumeKeyGuard.swallow(keyCode) || super.onKeyUp(keyCode, event);
     }
 
     private void hideSystemBars() {

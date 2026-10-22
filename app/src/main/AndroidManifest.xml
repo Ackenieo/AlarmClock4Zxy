@@ -46,7 +46,10 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- 响铃页：锁屏直接展示、自动点亮屏幕 -->
+        <!-- 响铃页：锁屏直接展示、自动点亮屏幕
+             lockTaskMode="if_whitelisted"：设备所有者下进入真正的锁定任务（Home/概览/通知栏全禁）；
+             非设备所有者下 startLockTask() 会落到系统的「屏幕固定」模式，同样切不走应用
+             （详见 README「锁定任务（Kiosk）模式」一节） -->
         <activity
             android:name=".RingingActivity"
             android:exported="false"
@@ -54,6 +57,7 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:excludeFromRecents="true"
+            android:lockTaskMode="if_whitelisted"
             android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <!-- 运动挑战页：竖屏，避免旋转导致相机重建 -->
@@ -87,6 +91,19 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 设备管理员（Device Admin）：用于支持锁定任务（Kiosk）模式，把手机真正锁死 -->
+        <receiver
+            android:name=".AlarmDeviceAdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
     </application>

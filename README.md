@@ -19,11 +19,13 @@
 | 目标次数  | 5~60 个，滑块调节，默认 20                                                     |
 | 精确响铃  | `AlarmManager.setAlarmClock()`，不受 Doze 影响，状态栏显示闹钟图标                   |
 | 锁屏全屏  | 前台服务 + 高优先级通知 + `fullScreenIntent`，息屏/锁屏时直接点亮屏幕跳到响铃页                  |
-| 声音与振动 | 自带的循环铃声（`res/raw/alarm_beep.wav`，44.1kHz 生成）+ 波形振动，走 `USAGE_ALARM` 通道 |
+| 声音与振动 | 自带的循环铃声（`res/raw/alarm_beep.wav`，44.1kHz 生成）+ 波形振动，走 `USAGE_ALARM` 通道；音量锁定最大 |
+| 免打扰兜底  | 检测到免打扰 / 静音，立刻切到更长更重的振动节拍；闹钟铃声本身在这两种状态下都不被系统抑制    |
 | 运动验证  | CameraX 前置预览 + ML Kit 骨骼识别，实时画骨架、计数、进度环                               |
 | 达标关闭  | 完成目标次数 → 播放完成音 → 停止服务、清除通知、回到桌面                                       |
 | 开机恢复  | 监听 `BOOT_COMPLETED` / `TIME_SET` / `TIMEZONE_CHANGED` 重新登记闹钟          |
-| 安全兜底  | 响铃页长按 5 秒可紧急关闭；相机权限被拒时长按 10 秒可强制关闭（避免手机被锁死）                           |
+| 防逃逸   | 响铃期间没有任何关闭入口：音量键和返回键被吃掉，界面被划掉后由服务看门狗拉回，进程被杀会自动恢复（详见 3.4） |
+| 硬超时兜底 | 连续响满 30 分钟自动停止——识别失败、相机被拒、半夜没人时唯一的最后一道保险（界面上不暴露）     |
 
 ## 2. 运行
 
@@ -48,12 +50,14 @@ AlarmManager.setAlarmClock(精确时刻)
             └─> AlarmService (前台服务, type=mediaPlayback)
                   ├─ MediaPlayer 循环播放 + Vibrator 波形振动
                   ├─ 高优先级通知 + fullScreenIntent
+                  ├─ 每秒巡检：音量拉满 / 免打扰复核 / 界面看门狗 / 30 分钟硬超时
                   └─> RingingActivity（锁屏可见、点亮屏幕、全屏）
                         └─> ExerciseActivity（相机 + 识别）
                               └─ 达标 → RESULT_OK → AlarmService.stop()
 ```
 
-声音只由 `AlarmService` 控制，界面层无法单独关闭——这是"必须运动"的前提。
+声音只由 `AlarmService` 控制，界面层拿不到任何停止入口——这是"必须运动"的前提。
+`ACTION_STOP` 是唯一的停止指令，只有响铃页在收到 `RESULT_OK` 后才会发出一次。
 
 ### 3.2 开合跳识别
 
@@ -104,6 +108,49 @@ legScore = |左踝x - 右踝x| / 参考宽度        并腿 ≈ 0.1~0.5，开腿
 App 内的「用测试视频验证识别」把这个视频逐帧喂给真正的 ML Kit，用同一套计数器跑，  
 可用于回归验证（不依赖真人站在镜头前）。
 
+### 3.4 防逃逸：为什么关不掉
+
+响铃期间 `AlarmService` 每秒巡检一次（`ticker`），配合两个界面上的按键拦截，把常见的逃逸路径逐条堵死：
+
+| 逃逸尝试              | 拦截方式                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| 按音量键调小 / 静音      | 响铃页与运动页都消费 `VOLUME_UP/DOWN/MUTE`（`VolumeKeyGuard`），只提示「音量已锁定最大」                        |
+| 通知栏音量滑块 / 系统调小   | `STREAM_ALARM` 每秒重新 `setStreamVolume(max)`，最多压低 1 秒                                       |
+| 开免打扰 / 拨静音物理键    | `ringerMode != NORMAL` 或 `currentInterruptionFilter != ALL` → 切强震动波形，振动用途标成 `USAGE_ALARM`。**铃声本身两种情况下都照常放**（实测 `STREAM_ALARM` 不在铃声模式抑制的流里）；振动只在静音/振动档生效，免打扰下会被系统按 app-ops 吞掉——见 6 的说明 |
+| 按 Home / 切到别的应用   | 界面 `onPause` 上报，服务发现前台界面消失超过 2 秒 → 重新拉起响铃页                                          |
+| 从概览把应用划掉         | `onTaskRemoved` → 800ms 后重新拉起响铃页，声音和振动全程不停（响铃页本身 `excludeFromRecents`，概览里根本没有它的卡片可划） |
+| 杀进程 / 系统回收       | `START_STICKY` + 会话落库（闹钟 id、次数、标题、截止时间）→ 服务重启后恢复同一个闹钟继续响                             |
+| 按返回键            | 响铃页拦截返回键，只提示「先完成运动，闹钟才会停」                                                                   |
+
+**唯一出口**是做完目标开合跳。**最后的保险**是连续响满 30 分钟（`MAX_RING_MILLIS`）自动停止：
+识别失败、相机被拒、半夜没人时不至于把手机变成一台只会响的砖头。这个兜底不在界面上暴露，也没有手动提前停的入口。
+
+> 后台启动 Activity 在 Android 10+ 受限，服务直接 `startActivity` 可能被系统拦下；
+> 拦下时退回「重发带 `fullScreenIntent` 的高优先级通知」这条系统认可的通路，息屏/锁屏下由系统代为拉起。
+
+### 3.5 锁定任务（Kiosk）模式
+
+想做到「连 Home 和概览都按不动」，普通安装是不够的——平台不允许第三方应用单方面锁死设备。
+本项目的 `android:lockTaskMode="if_whitelisted"` + `KioskController` 是这么设计的：
+
+- **不是设备所有者**：`startLockTask()` 抛异常，代码捕获后静默降级，只保留上面 3.4 那套按键拦截 + 看门狗。
+- **是设备所有者（Device Owner）**：`setLockTaskPackages()` 把本应用加白名单，
+  `setLockTaskFeatures(LOCK_TASK_FEATURE_NONE)` 关掉 Home / 概览 / 通知栏 / 锁屏，
+  响铃时进入 `LOCK_TASK_MODE_LOCKED`，用户无法离开本应用，也就进不去「设置 → 应用 → 强制停止」。
+
+设备所有者只能设在**已恢复出厂且未登录任何 Google / 厂商账号**的设备上，需要用 adb 手动授予一次：
+
+```bash
+adb shell dpm set-device-owner com.example.alarmclock4jacw/.AlarmDeviceAdminReceiver
+```
+
+授予后无需其他操作，到点响铃自动进入锁定；做完运动时 `KioskController.exitLockTask()` 会释放锁定，
+否则任务无法结束。撤销：
+
+```bash
+adb shell dpm remove-active-admin com.example.alarmclock4jacw/.AlarmDeviceAdminReceiver
+```
+
 ## 4. 权限
 
 | 权限                                                         | 用途                                     |
@@ -126,13 +173,16 @@ App 内的「用测试视频验证识别」把这个视频逐帧喂给真正的 
 app/src/main/java/com/example/alarmclock4jacw/
 ├── MainActivity.java          闹钟列表 / 权限引导 / 调试入口
 ├── AlarmEditActivity.java     时间、重复、次数编辑
-├── RingingActivity.java       锁屏响铃页
-├── ExerciseActivity.java      CameraX + ML Kit 实时识别
+├── RingingActivity.java       锁屏响铃页（无关闭入口，拦音量键与返回键）
+├── ExerciseActivity.java      CameraX + ML Kit 实时识别（无退出入口）
 ├── Alarm.java                 闹钟模型（含下次触发时间计算）
 ├── AlarmStore.java            SharedPreferences + JSON 持久化
 ├── AlarmScheduler.java        AlarmManager 精确调度
 ├── AlarmReceiver.java         到点广播
-├── AlarmService.java          响铃前台服务（声音/振动/全屏通知）
+├── AlarmService.java          响铃前台服务（音量锁定 / 免打扰切震动 / 看门狗 / 30 分钟兜底）
+├── KioskController.java       锁定任务进入与释放（设备所有者下才真正锁死）
+├── AlarmDeviceAdminReceiver.java 设备管理员声明，用于换取 Device Owner 身份
+├── VolumeKeyGuard.java        响铃期间把音量键变成废键
 ├── BootReceiver.java          开机重排
 ├── JumpingJackCounter.java    开合跳状态机（纯逻辑，可单测）
 ├── Landmarks.java             33 点归一化封装
@@ -147,3 +197,9 @@ app/src/main/java/com/example/alarmclock4jacw/
 - 前置摄像头需要拍到全身：建议把手机横放在床头柜或立在桌上，退后 2~3 米。太近会提示"请后退"。
 - 强光/逆光下骨骼点会丢失，此时界面会提示"没看到人"，不会误计数。
 - 未做"多次运动累计/多闹钟队列"等进阶玩法。
+- **强停仍是普通安装的出口**：`设置 → 应用 → 强制停止` 能杀掉进程，第三方应用无权禁止；要堵住只能走 3.5 的 Device Owner。
+- **免打扰下的振动会被系统吞掉**（API 37 模拟器实测：振动请求状态 `ignored_app_ops`，`FLAG_BYPASS_INTERRUPTION_POLICY` 也会被剥离成 `flags: 0`）。想让免打扰下也震，必须申请并让用户手动授予「通知策略访问」权限（`ACCESS_NOTIFICATION_POLICY`），本项目按产品决定没有申请。静音 / 振动档下振动实测正常生效（`currentState = VIBRATING`），铃声两种情况都在放。
+- **屏幕固定不是设备所有者**：非 Device Owner 时 `startLockTask()` 进入的是系统「屏幕固定」，实测 Home 键、概览键、上滑回桌面、拉起设置都被挡下；但「同时长按 返回 + 概览」是系统保留的解除方式，第三方应用拦不住（解除后铃声照旧，仍必须做完运动）。
+- **硬件强重启拦不住**：电源 + 音量长按 10 秒是系统级逃生口，任何应用都消费不掉（本项目也不打算对抗它）。
+- **看门狗受后台启动限制**：界面消失后靠 `startActivity` 拉回，被系统拦下时退回全屏通知；Android 14+ 没授予「全屏通知」的话，息屏下可能只弹横幅。
+- 30 分钟兜底自动停止后，一次性闹钟已在触发时被置为关闭，重复闹钟照常排下一次。
