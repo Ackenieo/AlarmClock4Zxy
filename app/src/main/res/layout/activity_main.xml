@@ -88,4 +88,16 @@
         </ScrollView>
     </LinearLayout>
 
+    <!-- 特效 UI：扫描线。压在内容上面（文字会有一点屏幕感），但不接管触摸 -->
+    <com.example.alarmclock4jacw.ScanlineView
+        android:id="@+id/scanline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 特效 UI：点击粒子。最上面一层，同样不接管触摸，只由 Activity 喂坐标 -->
+    <com.example.alarmclock4jacw.ParticleLayer
+        android:id="@+id/particles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

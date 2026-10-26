@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout container;
     private TextView subtitle;
     private AlarmStore store;
+    private ParticleLayer particles;
+    /** 给粒子层换算坐标用，避免每次点击都 new 一个 */
+    private final int[] layerLocation = new int[2];
 
     /** 当前页面渲染时用的主题指纹（强调色 + 背景色），用来判断从皮肤市场回来要不要重建界面 */
     private String themeSignature;
@@ -58,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         // 特效层：流光背景 + 像素标题，都跟着当前皮肤走
         SkinStore.applyFx(this.findViewById(R.id.flow_bg));
         SkinStore.applyPixelTitle(this.findViewById(R.id.title));
+        particles = findViewById(R.id.particles);
+        applyFxToggles();
 
         container = findViewById(R.id.alarm_container);
         subtitle = findViewById(R.id.subtitle);
@@ -93,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
 
         requestNotificationPermission();
         checkFullScreenIntent();
+
+        // 调试入口：adb am start --ez debug_ring true 直接打开响铃页看动效，
+        // 不用等 10 秒也不受锁定任务弹窗干扰。普通启动不会带这个 extra。
+        if (getIntent().getBooleanExtra("debug_ring", false)) {
+            startActivity(new Intent(this, RingingActivity.class)
+                    .putExtra(RingingActivity.EXTRA_DEBUG_KEEP, true));
+        }
     }
 
     /**
@@ -124,6 +137,28 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * 特效 UI：点击粒子。
+     *
+     * 粒子层自己不是可点的，只是被动接收坐标，所以必须在这里喂——
+     * 事件坐标是相对窗口的，减掉粒子层自己在窗口里的位置才是层内坐标。
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN && particles != null
+                && FxStore.isEnabled(this, FxStore.PARTICLE)) {
+            particles.getLocationInWindow(layerLocation);
+            particles.burst(ev.getRawX() - layerLocation[0], ev.getRawY() - layerLocation[1]);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /** 按皮肤市场里的开关，把本页的特效层显示/藏起来。 */
+    private void applyFxToggles() {
+        FxStore.applyFlowBg(this, findViewById(R.id.flow_bg));
+        FxStore.applyVisibility(this, FxStore.SCANLINE, findViewById(R.id.scanline));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -132,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
             recreate();
             return;
         }
+        applyFxToggles();
         AlarmScheduler.scheduleAll(this);
         render();
     }
@@ -176,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
         detail.setText(alarm.repeatText(this));
         reps.setText(alarm.taskSummary(this));
 
-        row.setAlpha(alarm.enabled ? 1f : 0.45f);
+        // 只有内容层变灰，删除按钮保持原色
+        row.setContentAlpha(alarm.enabled ? 1f : 0.45f);
 
         sw.setOnCheckedChangeListener(null);
         sw.setChecked(alarm.enabled);
@@ -184,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             alarm.enabled = checked;
             store.save(alarm);
             AlarmScheduler.schedule(this, alarm);
-            row.setAlpha(checked ? 1f : 0.45f);
+            row.setContentAlpha(checked ? 1f : 0.45f);
             updateSubtitle();
         });
 

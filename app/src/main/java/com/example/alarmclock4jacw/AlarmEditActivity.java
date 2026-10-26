@@ -59,6 +59,7 @@ public class AlarmEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_alarm);
 
         SkinStore.applyFx(this.findViewById(R.id.flow_bg));
+        FxStore.applyFlowBg(this, findViewById(R.id.flow_bg));
 
         store = AlarmStore.get(this);
 

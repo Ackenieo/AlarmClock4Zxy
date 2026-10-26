@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -85,6 +86,17 @@ public class SwipeRevealLayout extends ViewGroup {
         deleteListener = listener;
     }
 
+    /**
+     * 只给内容层调透明度。
+     * 禁用状态的闹钟整行变灰，但删除按钮是操作入口 —— 跟着一起灰掉会看着像坏了，
+     * 所以灰只压内容层，红面板保持原色。
+     */
+    public void setContentAlpha(float alpha) {
+        if (content != null) {
+            content.setAlpha(alpha);
+        }
+    }
+
     /** 收起当前展开的行（列表一开始滚动就调用）。 */
     public static void closeOpenRow() {
         if (openRow != null) {
@@ -139,6 +151,29 @@ public class SwipeRevealLayout extends ViewGroup {
         if (content != null) {
             content.setTranslationX(-offset);
         }
+        clipAction();
+    }
+
+    /**
+     * 删除层必须跟着滑出的宽度裁掉。
+     *
+     * 列表行是半透明玻璃，删除层要是整块留着，就会从玻璃底下透上来 ——
+     * 表现是没滑动的行右侧一直泛红，开关看着像被染了色。
+     * 用 setClipBounds 只保留已经露出来的那一段，剩下的不参与绘制。
+     */
+    private void clipAction() {
+        if (action == null) return;
+        int w = actionWidth;
+        int h = action.getHeight();
+        if (w <= 0 || h <= 0) return;
+
+        int shown = Math.round(Math.min(offset, w));
+        if (shown <= 0) {
+            action.setVisibility(INVISIBLE);
+            return;
+        }
+        action.setVisibility(VISIBLE);
+        action.setClipBounds(new Rect(w - shown, 0, w, h));
     }
 
     private void setOffset(float value) {

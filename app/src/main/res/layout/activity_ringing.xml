@@ -20,7 +20,8 @@
         android:paddingEnd="28dp"
         android:paddingBottom="40dp">
 
-        <TextView
+        <!-- 特效文本：故障抖色（隔几秒抽一下，红/青通道错位） -->
+        <com.example.alarmclock4jacw.GlitchTextView
             android:id="@+id/clock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,14 +66,32 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_start"
-            style="@style/Widget.PrimaryButton"
+        <!-- 主按钮：外层 10dp padding 是给霓虹光晕留的位置，内层叠一层呼吸灯管。
+             高度必须写死 84dp（= 按钮 64 + 上下各 10）：如果这里用 wrap_content，
+             霓虹层 match_parent 会按 AT_MOST 取满整屏，光框就会一路拉到屏幕底部。
+             clipToPadding 必须关掉：ViewGroup 默认把子视图裁到 padding 内侧，
+             光晕就出不去了，只能贴着按钮边缘。 -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginTop="28dp"
-            android:text="@string/ringing_start"
-            android:textSize="18sp" />
+            android:layout_height="84dp"
+            android:layout_marginTop="18dp"
+            android:clipToPadding="false"
+            android:padding="10dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_start"
+                style="@style/Widget.PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="@string/ringing_start"
+                android:textSize="18sp" />
+
+            <!-- 特效 UI：霓虹呼吸（不接管触摸，点在它身上会漏给下面的按钮） -->
+            <com.example.alarmclock4jacw.NeonPulseView
+                android:id="@+id/btn_start_neon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
         <Space
             android:layout_width="1dp"

@@ -174,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:columnCount="2" />
 
-            <!-- 特效 UI：还没做，先把栏目列出来 -->
+            <!-- 特效 UI：六张预览卡，点一下开关 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -193,11 +193,12 @@
                 android:textColor="@color/text_tertiary"
                 android:textSize="11sp" />
 
-            <LinearLayout
-                android:id="@+id/fx_ui_list"
+            <GridLayout
+                android:id="@+id/fx_ui_grid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:layout_marginTop="6dp"
+                android:columnCount="2" />
 
             <TextView
                 android:layout_width="wrap_content"

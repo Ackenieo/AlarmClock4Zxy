@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +31,13 @@ import java.util.Locale;
  */
 public class RingingActivity extends AppCompatActivity {
 
-    private TextView clock;
+    /**
+     * 测试用：直接 am start 本页时带上这个 extra，页面就不会因为「服务没在响」而自动关闭。
+     * 正常响铃链路不会传它，所以不影响线上行为。
+     */
+    public static final String EXTRA_DEBUG_KEEP = "debug_keep";
+
+    private GlitchTextView clock;
     private TextView repsText;
     private TextView hint;
     private int reps = 20;
@@ -39,6 +47,7 @@ public class RingingActivity extends AppCompatActivity {
     private String wordSessionId = "";
     private String taskType = Alarm.TASK_JUMPING_JACK;
     private long alarmId = -1L;
+    private boolean debugKeep;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable tick = new Runnable() {
@@ -47,7 +56,7 @@ public class RingingActivity extends AppCompatActivity {
             updateClock();
             updateHint();
             // 服务侧 30 分钟兜底停止后，界面自己收掉；锁定任务必须先退出，否则设备会留在锁死状态
-            if (!AlarmService.ringing) {
+            if (!AlarmService.ringing && !debugKeep) {
                 if (AlarmService.timedOut) {
                     Toast.makeText(RingingActivity.this, R.string.ringing_timeout, Toast.LENGTH_LONG).show();
                 }
@@ -64,6 +73,7 @@ public class RingingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SkinStore.applyTheme(this);
+        debugKeep = getIntent().getBooleanExtra(EXTRA_DEBUG_KEEP, false);
 
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true);
@@ -86,6 +96,11 @@ public class RingingActivity extends AppCompatActivity {
         clock = findViewById(R.id.clock);
         repsText = findViewById(R.id.reps_text);
         hint = findViewById(R.id.hint);
+
+        // 特效 UI：霓虹呼吸 + 故障抖色，按皮肤市场里的开关决定开不开
+        FxStore.applyFlowBg(this, findViewById(R.id.flow_bg));
+        FxStore.applyVisibility(this, FxStore.NEON, findViewById(R.id.btn_start_neon));
+        clock.setGlitchEnabled(FxStore.isEnabled(this, FxStore.GLITCH));
 
         exerciseLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -110,9 +125,26 @@ public class RingingActivity extends AppCompatActivity {
             exerciseLauncher.launch(i);
         });
 
+        // 特效 UI：液态按钮 —— 按下时从中心荡开水波。
+        // 前景 Drawable 收 state_pressed 不一定灵，这里直接盯 ACTION_DOWN 更稳；
+        // 返回 false 是故意的：事件继续交给按钮，点击照常触发。
+        final LiquidRippleDrawable liquid = new LiquidRippleDrawable(this, 20f);
+        View startButton = findViewById(R.id.btn_start);
+        startButton.setForeground(liquid);
+        startButton.setOnTouchListener((v, e) -> {
+            if (e.getActionMasked() == MotionEvent.ACTION_DOWN
+                    && FxStore.isEnabled(this, FxStore.LIQUID)) {
+                liquid.wave();
+            }
+            return false;
+        });
+
         // 进入锁定任务：设备所有者下真正锁死设备，非设备所有者静默降级
-        KioskController.allowLockTask(this);
-        KioskController.enterLockTask(this);
+        // 调试直启时跳过，否则系统会盖一层「应用已固定」的弹窗，挡住要看的特效
+        if (!debugKeep) {
+            KioskController.allowLockTask(this);
+            KioskController.enterLockTask(this);
+        }
 
         getOnBackPressedDispatcher().addCallback(this,
                 new androidx.activity.OnBackPressedCallback(true) {
@@ -133,6 +165,7 @@ public class RingingActivity extends AppCompatActivity {
 
     private void applyIntent(Intent intent) {
         if (intent == null) return;
+        debugKeep = intent.getBooleanExtra(EXTRA_DEBUG_KEEP, false);
         reps = intent.getIntExtra(AlarmService.EXTRA_REPS, 20);
         targetWords = intent.getIntExtra(AlarmService.EXTRA_WORDS, 10);
         wordStart = intent.getIntExtra(AlarmService.EXTRA_WORD_START, 0);
@@ -236,7 +269,7 @@ public class RingingActivity extends AppCompatActivity {
         // 重新获得焦点时（例如系统弹窗消失）再收一次状态栏，并尝试重新锁定
         if (hasFocus) {
             hideSystemBars();
-            KioskController.enterLockTask(this);
+            if (!debugKeep) KioskController.enterLockTask(this);
         }
     }
 }
