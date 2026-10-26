@@ -46,6 +46,7 @@ public class VideoTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SkinStore.applyTheme(this);
         setContentView(R.layout.activity_video_test);
 
         frameView = findViewById(R.id.frame);

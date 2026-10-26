@@ -46,6 +46,12 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- 皮肤市场：换配色，只改主题属性，不重启进程 -->
+        <activity
+            android:name=".SkinMarketActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
         <!-- 响铃页：锁屏直接展示、自动点亮屏幕
              lockTaskMode="if_whitelisted"：设备所有者下进入真正的锁定任务（Home/概览/通知栏全禁）；
              非设备所有者下 startLockTask() 会落到系统的「屏幕固定」模式，同样切不走应用

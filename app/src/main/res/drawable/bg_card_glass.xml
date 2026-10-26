@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  半透明卡片：用 8% 白而不是实心的 surfaceColor，
+  底色和原来的 #141414 几乎一样（黑底上叠加就是 #141414），
+  但底下的流光能透上来 —— 卡片像一块压暗的玻璃，而不是挡住光。
+  弹窗（dialog_*）故意还用 bg_card，那两块要实心，否则色盘会被背景的流光干扰。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#14FFFFFF" />
+    <corners android:radius="24dp" />
+</shape>

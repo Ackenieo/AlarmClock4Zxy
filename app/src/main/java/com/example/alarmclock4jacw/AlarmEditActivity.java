@@ -55,7 +55,10 @@ public class AlarmEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SkinStore.applyTheme(this);
         setContentView(R.layout.activity_edit_alarm);
+
+        SkinStore.applyFx(this.findViewById(R.id.flow_bg));
 
         store = AlarmStore.get(this);
 
@@ -188,10 +191,10 @@ public class AlarmEditActivity extends AppCompatActivity {
 
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(getColor(R.color.bg)));
+            window.setBackgroundDrawable(new ColorDrawable(SkinStore.bgColor(this)));
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            window.setStatusBarColor(getColor(R.color.bg));
-            window.setNavigationBarColor(getColor(R.color.bg));
+            window.setStatusBarColor(SkinStore.bgColor(this));
+            window.setNavigationBarColor(SkinStore.bgColor(this));
         }
 
         LinearLayout list = dialog.findViewById(R.id.repeat_list);
@@ -216,7 +219,7 @@ public class AlarmEditActivity extends AppCompatActivity {
 
             ImageView check = new ImageView(this);
             check.setImageResource(R.drawable.ic_check);
-            check.setColorFilter(getColor(R.color.accent));
+            check.setColorFilter(SkinStore.accent(this));
             check.setLayoutParams(new LinearLayout.LayoutParams(dp(20), dp(20)));
             check.setVisibility((repeatMask & bit) != 0 ? View.VISIBLE : View.INVISIBLE);
 
@@ -235,7 +238,7 @@ public class AlarmEditActivity extends AppCompatActivity {
                         ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
                 lp.setMarginStart(dp(20));
                 divider.setLayoutParams(lp);
-                divider.setBackgroundColor(getColor(R.color.stroke));
+                divider.setBackgroundColor(SkinStore.strokeColor(this));
                 list.addView(divider);
             }
         }

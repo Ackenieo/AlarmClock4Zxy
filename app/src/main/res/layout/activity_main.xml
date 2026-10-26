@@ -2,7 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:background="?attr/bgColor">
+
+    <!-- 特效背景：流光。画在所有内容底下，不接管触摸 -->
+    <com.example.alarmclock4jacw.FlowLightView
+        android:id="@+id/flow_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +25,8 @@
             android:paddingTop="36dp"
             android:paddingEnd="24dp">
 
-            <TextView
+            <!-- 特效文本：像素风标题（自定义 View，把字画小再放大） -->
+            <com.example.alarmclock4jacw.PixelTextView
                 android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -30,6 +37,18 @@
                 android:textColor="@color/text_primary"
                 android:textSize="40sp"
                 android:textStyle="bold" />
+
+            <!-- 皮肤市场入口：T 恤图标 -->
+            <ImageButton
+                android:id="@+id/fab_skin"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_circle_button"
+                android:contentDescription="@string/skin_market"
+                android:scaleType="center"
+                android:src="@drawable/ic_shirt"
+                android:tint="?attr/accent" />
 
             <ImageButton
                 android:id="@+id/fab_add"

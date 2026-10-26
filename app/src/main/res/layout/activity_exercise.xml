@@ -89,7 +89,7 @@
         android:id="@+id/permission_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg"
+        android:background="?attr/bgColor"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="36dp"

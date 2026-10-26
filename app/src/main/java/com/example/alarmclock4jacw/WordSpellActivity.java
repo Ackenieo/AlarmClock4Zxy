@@ -107,6 +107,7 @@ public class WordSpellActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SkinStore.applyTheme(this);
 
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true);
@@ -465,7 +466,7 @@ public class WordSpellActivity extends AppCompatActivity {
         reviewList.addView(row);
 
         View divider = new View(this);
-        divider.setBackgroundColor(getColor(R.color.stroke));
+        divider.setBackgroundColor(SkinStore.strokeColor(this));
         reviewList.addView(divider, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(1)));
     }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 选中态：同样是半透明玻璃，只多一圈强调色描边 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/surface" />
+    <solid android:color="#14FFFFFF" />
     <corners android:radius="24dp" />
     <stroke
         android:width="2dp"
-        android:color="@color/accent" />
+        android:color="?attr/accent" />
 </shape>

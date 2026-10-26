@@ -21,4 +21,38 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
+    <color name="ic_launcher_background">#FF080509</color>
+
+    <!-- ============ 皮肤市场配色 ============
+         每套皮肤 4 个色：accent 主色 / deep 深色 / soft 背景微光 / on 主色上的文字 -->
+    <!-- 曜石橙（默认） -->
+    <color name="skin_orange">#FFFF7A45</color>
+    <color name="skin_orange_deep">#FFCC4F1F</color>
+    <color name="skin_orange_soft">#FF241812</color>
+    <color name="skin_orange_on">#FF1A0C05</color>
+    <!-- 薄荷绿 -->
+    <color name="skin_mint">#FF35D0A5</color>
+    <color name="skin_mint_deep">#FF1C8E6F</color>
+    <color name="skin_mint_soft">#FF0E2620</color>
+    <color name="skin_mint_on">#FF04150F</color>
+    <!-- 海光蓝 -->
+    <color name="skin_ocean">#FF4AA8FF</color>
+    <color name="skin_ocean_deep">#FF2A6FB8</color>
+    <color name="skin_ocean_soft">#FF0E1C2B</color>
+    <color name="skin_ocean_on">#FF04101A</color>
+    <!-- 星夜紫 -->
+    <color name="skin_violet">#FFA78BFA</color>
+    <color name="skin_violet_deep">#FF6D4FD0</color>
+    <color name="skin_violet_soft">#FF191325</color>
+    <color name="skin_violet_on">#FF0F0819</color>
+    <!-- 樱粉 -->
+    <color name="skin_sakura">#FFFF6F91</color>
+    <color name="skin_sakura_deep">#FFC24363</color>
+    <color name="skin_sakura_soft">#FF251017</color>
+    <color name="skin_sakura_on">#FF1A0509</color>
+    <!-- 落日金 -->
+    <color name="skin_sunset">#FFFFC24B</color>
+    <color name="skin_sunset_deep">#FFC48A1E</color>
+    <color name="skin_sunset_soft">#FF231B0C</color>
+    <color name="skin_sunset_on">#FF1A1000</color>
 </resources>

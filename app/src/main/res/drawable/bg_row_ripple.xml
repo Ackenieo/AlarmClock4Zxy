@@ -7,8 +7,9 @@
         </shape>
     </item>
     <item>
+        <!-- 8% 白：黑底上看起来还是 #141414，但底下的流光能透上来 -->
         <shape android:shape="rectangle">
-            <solid android:color="@color/surface" />
+            <solid android:color="#14FFFFFF" />
         </shape>
     </item>
 </ripple>

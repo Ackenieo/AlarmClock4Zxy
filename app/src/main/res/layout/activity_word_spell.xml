@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:background="?attr/bgColor">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                     android:id="@+id/word_meaning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_card"
+                    android:background="@drawable/bg_card_glass"
                     android:gravity="center"
                     android:minHeight="128dp"
                     android:paddingStart="24dp"
@@ -204,7 +204,7 @@
         android:id="@+id/review_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg"
+        android:background="?attr/bgColor"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingStart="24dp"
@@ -234,7 +234,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_card_glass"
             android:clipToPadding="false">
 
             <LinearLayout

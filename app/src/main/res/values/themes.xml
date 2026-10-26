@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 默认皮肤：曜石橙。切换皮肤时由 Skin.* / Bg.* 覆盖层改写下面这些属性 -->
     <style name="Theme.AlarmClock4jACW" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/accent</item>
+        <item name="accent">@color/accent</item>
+        <item name="accentDeep">@color/accent_deep</item>
+        <item name="accentSoft">@color/accent_soft</item>
+        <item name="onAccent">@color/on_accent</item>
+
+        <item name="bgColor">@color/bg</item>
+        <item name="surfaceColor">@color/surface</item>
+        <item name="surfaceHighColor">@color/surface_high</item>
+        <item name="strokeColor">@color/stroke</item>
+
+        <item name="colorPrimary">?attr/accent</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryContainer">@color/accent_deep</item>
+        <item name="colorPrimaryContainer">?attr/accentDeep</item>
         <item name="colorOnPrimaryContainer">@color/white</item>
         <item name="colorSecondary">@color/mint</item>
-        <item name="colorOnSecondary">@color/on_accent</item>
-        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSecondary">?attr/onAccent</item>
+        <item name="colorSurface">?attr/surfaceColor</item>
         <item name="colorOnSurface">@color/text_primary</item>
-        <item name="colorSurfaceVariant">@color/surface_high</item>
+        <item name="colorSurfaceVariant">?attr/surfaceHighColor</item>
         <item name="colorOnSurfaceVariant">@color/text_secondary</item>
         <item name="colorError">@color/danger</item>
-        <item name="android:colorBackground">@color/bg</item>
-        <item name="android:windowBackground">@color/bg</item>
-        <item name="android:statusBarColor">@color/bg</item>
-        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:colorBackground">?attr/bgColor</item>
+        <item name="android:windowBackground">?attr/bgColor</item>
+        <item name="android:statusBarColor">?attr/bgColor</item>
+        <item name="android:navigationBarColor">?attr/bgColor</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:textColorHint">@color/text_tertiary</item>
@@ -29,6 +40,14 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
     </style>
 
+    <!-- 色盘对话框：继承应用主题，?attr/accent 才能解析；圆角卡片自己画，所以窗口背景透明 -->
+    <style name="Theme.AlarmClock4jACW.Dialog" parent="Theme.AlarmClock4jACW">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0.66</item>
+    </style>
+
     <style name="Text.Title" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textStyle">bold</item>
@@ -39,8 +58,8 @@
     </style>
 
     <style name="Widget.PrimaryButton" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/accent</item>
-        <item name="android:textColor">@color/on_accent</item>
+        <item name="backgroundTint">?attr/accent</item>
+        <item name="android:textColor">?attr/onAccent</item>
         <item name="android:textStyle">bold</item>
         <item name="cornerRadius">20dp</item>
         <item name="android:letterSpacing">0.02</item>

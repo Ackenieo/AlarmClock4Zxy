@@ -3,21 +3,31 @@
 
     <!-- 应用本身即为深色（夜间闹钟场景），夜间模式沿用同一套配色 -->
     <style name="Theme.AlarmClock4jACW" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/accent</item>
+        <item name="accent">@color/accent</item>
+        <item name="accentDeep">@color/accent_deep</item>
+        <item name="accentSoft">@color/accent_soft</item>
+        <item name="onAccent">@color/on_accent</item>
+
+        <item name="bgColor">@color/bg</item>
+        <item name="surfaceColor">@color/surface</item>
+        <item name="surfaceHighColor">@color/surface_high</item>
+        <item name="strokeColor">@color/stroke</item>
+
+        <item name="colorPrimary">?attr/accent</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryContainer">@color/accent_deep</item>
+        <item name="colorPrimaryContainer">?attr/accentDeep</item>
         <item name="colorOnPrimaryContainer">@color/white</item>
         <item name="colorSecondary">@color/mint</item>
-        <item name="colorOnSecondary">@color/on_accent</item>
-        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSecondary">?attr/onAccent</item>
+        <item name="colorSurface">?attr/surfaceColor</item>
         <item name="colorOnSurface">@color/text_primary</item>
-        <item name="colorSurfaceVariant">@color/surface_high</item>
+        <item name="colorSurfaceVariant">?attr/surfaceHighColor</item>
         <item name="colorOnSurfaceVariant">@color/text_secondary</item>
         <item name="colorError">@color/danger</item>
-        <item name="android:colorBackground">@color/bg</item>
-        <item name="android:windowBackground">@color/bg</item>
-        <item name="android:statusBarColor">@color/bg</item>
-        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:colorBackground">?attr/bgColor</item>
+        <item name="android:windowBackground">?attr/bgColor</item>
+        <item name="android:statusBarColor">?attr/bgColor</item>
+        <item name="android:navigationBarColor">?attr/bgColor</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:textColorHint">@color/text_tertiary</item>

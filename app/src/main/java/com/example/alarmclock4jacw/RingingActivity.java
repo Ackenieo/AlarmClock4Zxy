@@ -63,6 +63,7 @@ public class RingingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SkinStore.applyTheme(this);
 
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true);
@@ -79,6 +80,8 @@ public class RingingActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_ringing);
         hideSystemBars();
+
+        SkinStore.applyFx(findViewById(R.id.flow_bg));
 
         clock = findViewById(R.id.clock);
         repsText = findViewById(R.id.reps_text);

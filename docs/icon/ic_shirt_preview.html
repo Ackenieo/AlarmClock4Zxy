@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>皮肤市场图标 · 预览</title>
+<style>
+  :root{
+    --bg:#000; --surface:#141416; --surface-high:#1F1F22; --stroke:#2A2A2E;
+    --accent:#FF7A45; --text:#F5F5F7; --text2:#9A9AA0; --text3:#63636A;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:48px 40px 64px; background:#0b0b0c; color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",-apple-system,system-ui,sans-serif;
+  }
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:.2px}
+  .lead{color:var(--text2);font-size:13px;margin:0 0 36px;line-height:1.7}
+  .lead code{color:var(--accent);font-family:ui-monospace,Consolas,monospace}
+  h2{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.16em;
+     text-transform:uppercase;margin:0 0 16px}
+
+  /* ---- 首页顶部原尺寸还原（1dp = 1px） ---- */
+  .phone{
+    width:360px;border-radius:22px;overflow:hidden;background:var(--bg);
+    border:1px solid #232326;padding:0 0 18px;
+  }
+  .header{display:flex;align-items:center;padding:36px 24px 0}
+  .title{flex:1;font-size:40px;font-weight:700;letter-spacing:-0.8px;line-height:1.1}
+  .circle{
+    width:56px;height:56px;border-radius:50%;background:var(--surface-high);
+    border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+  }
+  .circle + .circle{margin-left:10px}
+  .subtitle{margin:8px 0 0 26px;font-size:13px;color:var(--text2)}
+  .icon-24{width:24px;height:24px}
+
+  /* ---- 规格网格 ---- */
+  .row{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:44px}
+  .cell{
+    background:var(--surface);border:1px solid #1d1d20;border-radius:14px;
+    padding:22px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:120px;
+  }
+  .cell span{font-size:11px;color:var(--text3);letter-spacing:.08em}
+  .swatches{display:flex;gap:0;border-radius:14px;overflow:hidden;border:1px solid #1d1d20}
+  .sw{width:110px;height:110px;display:flex;align-items:center;justify-content:center}
+  .sw b{position:absolute;margin-top:92px;font-size:10px;font-weight:400;color:#8b8b90}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;max-width:900px}
+  .spec{background:var(--surface);border:1px solid #1d1d20;border-radius:12px;padding:16px 18px;font-size:12.5px;color:var(--text2);line-height:1.9}
+  .spec b{color:var(--text);font-weight:600}
+  .spec em{color:var(--accent);font-style:normal;font-family:ui-monospace,Consolas,monospace;font-size:11.5px}
+  .wrap{display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start}
+</style>
+</head>
+<body>
+
+<h1>皮肤市场 · 衣服图标</h1>
+<p class="lead">
+  24×24 线稿 T 恤，描边 1.7、圆头圆角；<code>ic_shirt.xml</code> 的描边为纯白，
+  实际颜色由 <code>android:tint="@color/accent"</code> 决定（下图按主题橙 #FF7A45 渲染）。
+</p>
+
+<div class="wrap">
+  <div>
+    <h2>首页顶部（实际尺寸）</h2>
+    <div class="phone">
+      <div class="header">
+        <div class="title">闹钟</div>
+        <div class="circle">
+          <svg class="icon-24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+            <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+          </svg>
+        </div>
+        <div class="circle">
+          <svg class="icon-24" viewBox="0 0 24 24" fill="var(--text)">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="subtitle">下次响铃 · 明天 01:59</div>
+    </div>
+  </div>
+
+  <div>
+    <h2>尺寸</h2>
+    <div class="row">
+      <div class="cell">
+        <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="var(--text)"
+             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+          <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+        </svg>
+        <span>96 dp</span>
+      </div>
+      <div class="cell">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text)"
+             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+          <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+        </svg>
+        <span>48 dp</span>
+      </div>
+      <div class="cell">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text)"
+             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+          <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+        </svg>
+        <span>24 dp（默认）</span>
+      </div>
+    </div>
+
+    <h2>配色适配</h2>
+    <div class="swatches">
+      <div class="sw" style="background:#000">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#F5F5F7"
+             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+          <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+        </svg>
+      </div>
+      <div class="sw" style="background:#1F1F22">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF7A45"
+             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+          <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+        </svg>
+      </div>
+      <div class="sw" style="background:#FF7A45">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1A0C05"
+             stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.8 3.8 5.4 5 2.9 8.9 6.1 10.7 7.3 9.2 7.3 20.5 16.7 20.5 16.7 9.2 17.9 10.7 21.1 8.9 18.6 5 15.2 3.8"/>
+          <path d="M8.8 3.8c.4 2.4 1.6 3.4 3.2 3.4s2.8-1 3.2-3.4"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 style="margin-top:44px">规格</h2>
+<div class="grid2">
+  <div class="spec">画布 <b>24 × 24</b> · viewBox <em>0 0 24 24</em></div>
+  <div class="spec">描边 <b>1.7</b> · 圆头 <em>round</em> · 圆角 <em>round</em> · 无填充</div>
+  <div class="spec">横向占位 <b>2.9 → 21.1</b>（18.2 格），纵向 <b>3.8 → 20.5</b>（16.7 格）</div>
+  <div class="spec">文件 <b>ic_shirt.xml</b> · 矢量，无需多倍图</div>
+</div>
+
+</body>
+</html>

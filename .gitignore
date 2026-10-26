@@ -1,19 +1,47 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+# ---------------------------------------------------------------- 构建产物
+# 这些是编译出来的东西，永远不进仓库
+/.gradle/
+/build/
+/app/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+.kotlin/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.hprof
 
-# IDE configurations
+# ---------------------------------------------------------------- 本地配置
+# 每台机器的 SDK 路径不一样，进仓库只会天天冲突
+local.properties
+*.jks
+*.keystore
+
+# ---------------------------------------------------------------- IDE / 系统
 .idea/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------- 临时文件
 *.bak
+*.orig
+*.rej
+*.log
+
+# ---------------------------------------------------------------- 我自己跑的中间产物
+# 下划线开头的是临时校验脚本和中间截图（真正要留的成品不带下划线）
+/tools/_*
+/docs/_*.png
+/docs/_*.xml
+/docs/icon/_*
+
+# ---------------------------------------------------------------- 过程记录，不进仓库
+# 我写的工作日志：只是本地过程笔记，对读代码的人没价值
+/.workbuddy-ai/
+# 早期生成的架构图（渲染版 / SVG 源 / 双语版），需要时本地打开看
+/docs/architecture*

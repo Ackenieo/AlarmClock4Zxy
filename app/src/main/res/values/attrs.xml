@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 皮肤（配色）相关的自定义主题属性。
+     页面里统一用 ?attr/xxx 这类引用，切换皮肤时由 Skin_*/Bg_* 覆盖层改写取值，
+     不需要重建任何资源。
+     前 4 个是「字体/强调色」，后 4 个是「背景色」及其派生的卡片色。 -->
+<resources>
+    <attr name="accent" format="color" />
+    <attr name="accentDeep" format="color" />
+    <attr name="accentSoft" format="color" />
+    <attr name="onAccent" format="color" />
+
+    <attr name="bgColor" format="color" />
+    <attr name="surfaceColor" format="color" />
+    <attr name="surfaceHighColor" format="color" />
+    <attr name="strokeColor" format="color" />
+</resources>

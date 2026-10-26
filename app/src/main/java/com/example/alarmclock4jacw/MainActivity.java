@@ -41,13 +41,23 @@ public class MainActivity extends AppCompatActivity {
     private TextView subtitle;
     private AlarmStore store;
 
+    /** 当前页面渲染时用的主题指纹（强调色 + 背景色），用来判断从皮肤市场回来要不要重建界面 */
+    private String themeSignature;
+
     private ActivityResultLauncher<Intent> editLauncher;
     private ActivityResultLauncher<String> notifPermissionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SkinStore.applyTheme(this);
         setContentView(R.layout.activity_main);
+
+        themeSignature = SkinStore.get(this).themeSignature();
+
+        // 特效层：流光背景 + 像素标题，都跟着当前皮肤走
+        SkinStore.applyFx(this.findViewById(R.id.flow_bg));
+        SkinStore.applyPixelTitle(this.findViewById(R.id.title));
 
         container = findViewById(R.id.alarm_container);
         subtitle = findViewById(R.id.subtitle);
@@ -67,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.fab_add).setOnClickListener(v ->
                 editLauncher.launch(new Intent(this, AlarmEditActivity.class)));
+
+        findViewById(R.id.fab_skin).setOnClickListener(v ->
+                startActivity(new Intent(this, SkinMarketActivity.class)));
 
         findViewById(R.id.title).setOnLongClickListener(v -> {
             showDebugMenu();
@@ -114,6 +127,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // 从皮肤市场回来时配色可能换了（强调色或背景色都算），主题只能重建才生效
+        if (!SkinStore.get(this).themeSignature().equals(themeSignature)) {
+            recreate();
+            return;
+        }
         AlarmScheduler.scheduleAll(this);
         render();
     }
