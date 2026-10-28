@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ジャンプアラーム</string>
+    <string name="app_subtitle">運動しないと、アラームは止まりません</string>
+
+    <string name="home_title">アラーム</string>
+    <string name="next_alarm_none">有効なアラームはありません</string>
+    <string name="next_alarm_fmt">次回 · %1$s</string>
+    <string name="today_fmt">今日 %1$s</string>
+    <string name="tomorrow_fmt">明日 %1$s</string>
+    <string name="weekday_time_fmt">%1$s %2$s</string>
+    <string name="add_alarm">アラームを追加</string>
+    <string name="skin_market">スキン</string>
+    <string name="language_button">言語を切り替え</string>
+    <string name="language_dialog_title">言語</string>
+    <string name="language_dialog_sub">アプリの表示言語を選択</string>
+    <string name="language_system">システムに合わせる</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+    <string name="language_japanese">日本語</string>
+    <string name="language_french">Français</string>
+    <string name="language_selected">選択中</string>
+    <string name="language_note">選択するとすぐに反映されます</string>
+    <string name="skin_market_sub">ホーム・編集・アラーム画面の配色を選べます</string>
+    <string name="skin_market_preview_time">次回 · 明日 07:00</string>
+    <string name="skin_market_more">スキンは順次追加予定</string>
+    <string name="skin_section_fx">モーションスキン</string>
+    <string name="skin_section_fx_sub">1スキンにつき1つの光の流れ · 最後のタイルでオフ</string>
+    <string name="skin_section_ui">モーションUI</string>
+    <string name="skin_section_ui_sub">カードをタップして切替。プレビューは実際に動きます</string>
+    <string name="fx_badge">FX</string>
+    <string name="fx_state_on">オン</string>
+    <string name="fx_state_off">オフ</string>
+    <string name="fx_lava">ラヴァフロー</string>
+    <string name="fx_aurora">オーロラベール</string>
+    <string name="fx_deep">ディープカレント</string>
+    <string name="fx_nebula">ネビュラドリフト</string>
+    <string name="fx_sakura">サクラ舞い</string>
+    <string name="fx_sunset">サンセットレイ</string>
+    <string name="fx_flow">ライトフロー</string>
+    <string name="fx_ui_glow_border">グローボーダー</string>
+    <string name="fx_ui_glow_border_desc">カードの縁を光が周回 · スキン</string>
+    <string name="fx_ui_particle">タップパーティクル</string>
+    <string name="fx_ui_particle_desc">タップで光が弾ける · ホーム</string>
+    <string name="fx_ui_scanline">スキャンライン</string>
+    <string name="fx_ui_scanline_desc">CRT風の細い走査線 · ホーム</string>
+    <string name="fx_ui_neon">ネオンパルス</string>
+    <string name="fx_ui_neon_desc">ボタンの光の輪が呼吸 · アラーム</string>
+    <string name="fx_ui_glitch">グリッチシフト</string>
+    <string name="fx_ui_glitch_desc">RGBずれの文字揺れ · アラーム</string>
+    <string name="fx_ui_liquid">リキッドボタン</string>
+    <string name="fx_ui_liquid_desc">押すたびに波紋 · アラーム</string>
+    <string name="fx_skin_plain">モーションなし</string>
+    <string name="fx_skin_plain_sub">背景の光の流れをオフ</string>
+    <string name="skin_in_use">使用中</string>
+    <string name="skin_applied_fmt">「%1$s」を適用しました</string>
+    <string name="skin_applied_custom">カスタムカラーを適用しました</string>
+    <string name="skin_obsidian">オブシディアン</string>
+    <string name="skin_mint">ミント</string>
+    <string name="skin_ocean">オーシャンブルー</string>
+    <string name="skin_violet">バイオレットナイト</string>
+    <string name="skin_sakura">サクラピンク</string>
+    <string name="skin_sunset">サンセットゴールド</string>
+    <string name="skin_custom">カスタム</string>
+    <string name="skin_preview_hint">タップして色を変更</string>
+    <string name="skin_current_fmt">現在 · %1$s</string>
+    <string name="color_picker_title">カスタムカラー</string>
+    <string name="color_picker_sub">ホイールを回して色を選び、明るさを調整</string>
+    <string name="color_target_accent">文字色を編集中 · 左右にスワイプで切替</string>
+    <string name="color_target_bg">背景色を編集中 · 読みやすさのため暗い色のみ</string>
+    <string name="color_picker_apply">適用</string>
+    <string name="color_tone_light">明</string>
+    <string name="color_tone_deep">暗</string>
+    <string name="back">戻る</string>
+    <string name="empty_title">アラームはまだありません</string>
+    <string name="empty_desc">右上の＋をタップして追加。明日の朝はジャンピングジャックで目覚めましょう。</string>
+    <string name="streak_home_fmt">連続%1$s · 累計%2$d回</string>
+    <string name="streak_home_broken_fmt">連続記録は途切れました · 累計%1$d回</string>
+    <string name="streak_celebration_title_fmt">連続%1$s達成！</string>
+    <string name="streak_celebration_message">この調子で続けましょう。明日の朝も待っています。</string>
+    <string name="streak_celebration_total_fmt">累計成功 %1$d回</string>
+    <string name="streak_next_fmt">次回のお祝い：%1$d日目</string>
+    <string name="streak_continue">続ける</string>
+    <string name="streak_celebration_icon">お祝い</string>
+    <plurals name="streak_days">
+        <item quantity="other">%1$d日</item>
+    </plurals>
+    <string name="repeat_never">なし</string>
+    <string name="repeat_selected_fmt">%1$s</string>
+    <string-array name="weekday_full">
+        <item>毎週月曜日</item>
+        <item>毎週火曜日</item>
+        <item>毎週水曜日</item>
+        <item>毎週木曜日</item>
+        <item>毎週金曜日</item>
+        <item>毎週土曜日</item>
+        <item>毎週日曜日</item>
+    </string-array>
+    <string-array name="weekday_short">
+        <item>月</item>
+        <item>火</item>
+        <item>水</item>
+        <item>木</item>
+        <item>金</item>
+        <item>土</item>
+        <item>日</item>
+    </string-array>
+    <string name="list_separator">・</string>
+
+    <string name="new_alarm">新規アラーム</string>
+    <string name="edit_alarm">アラーム編集</string>
+    <string name="save">保存</string>
+    <string name="delete">削除</string>
+    <string name="cancel">キャンセル</string>
+    <string name="delete_confirm">元に戻せません。このアラームを削除しますか？</string>
+    <string name="repeat_label">繰り返し</string>
+    <string name="exercise_label">タスク</string>
+    <string name="reps_label">目標回数</string>
+    <string name="ai_counting">AI計数</string>
+    <string name="reps_preview">ジャンピングジャック20回</string>
+    <string name="reps_preview_value">20回</string>
+    <string name="word_count_preview_value">10語</string>
+    <string name="word_task_name">英単語</string>
+    <string name="word_task_tag">スペル</string>
+    <string name="word_mode_choice">選択</string>
+    <string name="word_mode_spell">スペル</string>
+    <string name="word_mode_label">英単語モード</string>
+    <string name="word_count_label">目標単語数</string>
+    <string name="word_count_fmt">%1$d語</string>
+    <string name="word_count_value_fmt">%1$d語</string>
+    <string name="word_book_label">単語帳</string>
+    <string name="word_book_global_fmt">%1$s · 全体</string>
+    <string name="word_book_dialog_title">単語帳を選択（全体設定）</string>
+    <string name="word_book_cet4">CET-4</string>
+    <string name="word_book_cet6">CET-6</string>
+    <string name="word_list_unavailable">単語帳を読み込めません。このタスクは選択できません。</string>
+    <string name="word_summary_fmt">%1$d語 · %2$s</string>
+    <string name="jump_summary_fmt">ジャンピングジャック%1$d回</string>
+    <string name="reps_unit">回</string>
+    <string name="reps_value_fmt">%1$d回</string>
+    <string name="once">1回のみ</string>
+    <string name="every_day">毎日</string>
+    <string name="workdays">平日</string>
+    <string name="weekend">週末</string>
+    <string name="coming_soon">近日公開</string>
+    <string name="exercise_jumping_jack">開脚ジャンプ</string>
+    <string name="exercise_squat">スクワット</string>
+    <string name="exercise_pushup">腕立て伏せ</string>
+
+    <string name="ringing_title">起きる時間です</string>
+    <string name="ringing_reps_fmt">アラームを止めるにはジャンピングジャックを%1$d回行ってください</string>
+    <string name="ringing_words_fmt">アラームを止めるには単語問題を%1$d問答えてください</string>
+    <string name="ringing_start">チャレンジ開始</string>
+    <string name="ringing_hint">カメラをオンにするとAIが回数を数えます</string>
+    <string name="ringing_word_hint">中国語を見て英単語をスペル入力</string>
+    <string name="ringing_choice_hint">中国語を見て英単語を選択</string>
+    <string name="ringing_back_hint">運動を終えるまでアラームは止まりません</string>
+    <string name="ringing_word_back_hint">単語を終えるまでアラームは止まりません</string>
+    <string name="ringing_volume_locked">アラーム音量は最大に固定されています</string>
+    <string name="ringing_vibration_boost">サイレント/集中モードを検知。強い振動に切り替えました</string>
+    <string name="ringing_timeout">30分経過したため、アラームは自動停止しました</string>
+
+    <string name="word_page_fmt">単語 %1$d / %2$d</string>
+    <string name="word_input_hint">英単語を入力</string>
+    <string name="word_submit">送信</string>
+    <string name="word_hint_default">中国語を見て英単語をスペル入力</string>
+    <string name="word_choice_hint">英単語を選択</string>
+    <string name="word_play">発音を再生</string>
+    <string name="word_tts_missing_title">英語音声が見つかりません</string>
+    <string name="word_tts_missing_desc">システムTTSにアメリカ英語の音声がありません。オフライン音声をインストールすると発音を再生できます。問題はこのまま続けられます。</string>
+    <string name="word_tts_settings">音声を入手</string>
+    <string name="word_tts_later">今は答える</string>
+    <string name="word_review_wrong">不正解</string>
+    <string name="word_hint_first_fmt">ヒント：最初の文字は %1$s</string>
+    <string name="word_hint_length_fmt">ヒント：最初の文字は %1$s · %2$d文字</string>
+    <string name="word_answer_fmt">答え：%1$s。次の単語へ</string>
+    <string name="word_good">good!</string>
+    <string name="word_review_title">完了！</string>
+    <string name="word_review_sub_fmt">今回の単語：%1$d語</string>
+    <string name="word_review_done">完了</string>
+
+    <string name="exercise_title">ジャンピングジャックに挑戦</string>
+    <string name="exercise_prepare">準備</string>
+    <string name="exercise_hint_stand">全身が画面に入るように下がってください</string>
+    <string name="exercise_hint_open">ジャンプして両腕を頭上に上げる</string>
+    <string name="exercise_hint_closed">いい調子！足をそろえて腕を下げる</string>
+    <string name="exercise_hint_too_close">近すぎます。一歩下がってください</string>
+    <string name="exercise_hint_no_person">人が見つかりません。カメラの前に立ってください</string>
+    <string name="exercise_hint_feet">足が画面に入るように下がってください</string>
+    <string name="exercise_hint_arms">両手も画面に入れてください</string>
+    <string name="exercise_switch_camera">カメラを切り替え</string>
+    <string name="exercise_success">完了！</string>
+    <string name="exercise_success_sub">アラームを停止しました。おはようございます</string>
+    <string name="exercise_perm_title">カメラの許可が必要です</string>
+    <string name="exercise_perm_desc">AIが運動を確認するためにカメラを使用します。許可しない場合、アラームは30分の安全タイムアウトまで止まりません。</string>
+    <string name="exercise_perm_grant">カメラを許可</string>
+
+    <string name="notif_channel_alarm">アラーム通知</string>
+    <string name="notif_channel_alarm_desc">アラーム時刻の全画面通知</string>
+    <string name="notif_ringing_text">ジャンピングジャックを終えると停止します</string>
+
+    <string name="toast_perm_notification">通知がオフのため、全画面アラームが表示されない場合があります</string>
+    <string name="toast_alarm_saved">アラームを保存しました</string>
+    <string name="toast_alarm_deleted">アラームを削除しました</string>
+    <string name="toast_exact_denied">システム設定で「アラームとリマインダー」を許可してください</string>
+
+    <string name="fsi_title">全画面アラームをオンにする</string>
+    <string name="fsi_desc">Android 14以降、全画面通知は通話・アラーム系アプリにのみ既定で許可されます。「ジャンプアラーム」に全画面通知を許可すると、ロック画面から運動画面を直接開けます。許可しない場合は通知バナーだけが表示されます。</string>
+    <string name="fsi_open">設定を開く</string>
+    <string name="fsi_later">後で</string>
+
+    <string name="debug_menu">デバッグツール</string>
+    <string name="debug_test_10s">10秒後にテストアラーム</string>
+    <string name="debug_word_test">10秒後に英単語テスト（3語）</string>
+    <string name="debug_video">テスト動画で認識を検証</string>
+    <string name="debug_testing_scheduled">10秒後にアラームが鳴ります</string>
+    <string name="video_title">認識アルゴリズム検証</string>
+    <string name="video_loading">動画をデコード中…</string>
+    <string name="video_stats_fmt">フレーム %1$d / %2$d · 回数 %3$d · 腕 %4$.2f · 脚 %5$.2f · %6$s</string>
+    <string name="video_finished_fmt">認識完了 · ジャンピングジャック %1$d回</string>
+    <string name="video_failed_fmt">失敗：%1$s</string>
+    <string name="debug_complete">DEBUG: 自動完了</string>
+</resources>

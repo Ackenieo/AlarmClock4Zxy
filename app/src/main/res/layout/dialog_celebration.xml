@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="24dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="20dp">
+
+    <FrameLayout
+        android:layout_width="82dp"
+        android:layout_height="82dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_accent_circle" />
+
+        <ImageView
+            android:id="@+id/celebration_icon"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/streak_celebration_icon"
+            android:src="@drawable/ic_trophy"
+            android:tint="@color/white" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/celebration_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:textColor="@color/text_primary"
+        android:textSize="23sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/celebration_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp"
+        android:text="@string/streak_celebration_message"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/celebration_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:textColor="?attr/accent"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/celebration_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:textColor="@color/text_tertiary"
+        android:textSize="12sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/celebration_continue"
+        style="@style/Widget.PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="22dp"
+        android:text="@string/streak_continue" />
+</LinearLayout>

@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -46,7 +45,7 @@ import java.util.Random;
  * 拼写模式保留 3/5 次提示、10 次显示答案跳词。
  * 两种模式都支持 TTS 发音与复习页点读。
  */
-public class WordSpellActivity extends AppCompatActivity {
+public class WordSpellActivity extends BaseActivity {
 
     private static final int HINT_FIRST_AT = 3;
     private static final int HINT_LENGTH_AT = 5;

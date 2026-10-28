@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jump Alarm</string>
+    <string name="app_subtitle">No workout, no silence.</string>
+
+    <string name="home_title">Alarm</string>
+    <string name="next_alarm_none">No active alarms</string>
+    <string name="next_alarm_fmt">Next alarm · %1$s</string>
+    <string name="today_fmt">Today %1$s</string>
+    <string name="tomorrow_fmt">Tomorrow %1$s</string>
+    <string name="weekday_time_fmt">%1$s %2$s</string>
+    <string name="add_alarm">Add alarm</string>
+    <string name="skin_market">Skin Studio</string>
+    <string name="language_button">Change language</string>
+    <string name="language_dialog_title">Language</string>
+    <string name="language_dialog_sub">Choose the language for the app</string>
+    <string name="language_system">Follow system</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+    <string name="language_japanese">日本語</string>
+    <string name="language_french">Français</string>
+    <string name="language_selected">Selected</string>
+    <string name="language_note">Changes apply immediately</string>
+    <string name="skin_market_sub">Pick a palette for the home, edit, and ringing screens.</string>
+    <string name="skin_market_preview_time">Next alarm · Tomorrow 07:00</string>
+    <string name="skin_market_more">More skins on the way</string>
+    <string name="skin_section_fx">Motion skins</string>
+    <string name="skin_section_fx_sub">One flow per skin · The last tile turns it off</string>
+    <string name="skin_section_ui">Motion UI</string>
+    <string name="skin_section_ui_sub">Tap a card to toggle. Previews are live.</string>
+    <string name="fx_badge">FX</string>
+    <string name="fx_state_on">On</string>
+    <string name="fx_state_off">Off</string>
+    <string name="fx_lava">Lava Flow</string>
+    <string name="fx_aurora">Aurora Veil</string>
+    <string name="fx_deep">Deep Current</string>
+    <string name="fx_nebula">Nebula Drift</string>
+    <string name="fx_sakura">Sakura Fall</string>
+    <string name="fx_sunset">Sunset Rays</string>
+    <string name="fx_flow">Light Flow</string>
+    <string name="fx_ui_glow_border">Glow Border</string>
+    <string name="fx_ui_glow_border_desc">Light circling card edges · Skins</string>
+    <string name="fx_ui_particle">Tap Particles</string>
+    <string name="fx_ui_particle_desc">Bursts of light on tap · Home</string>
+    <string name="fx_ui_scanline">Scanlines</string>
+    <string name="fx_ui_scanline_desc">Fine CRT sweep · Home</string>
+    <string name="fx_ui_neon">Neon Pulse</string>
+    <string name="fx_ui_neon_desc">Button halo breathes · Ringing</string>
+    <string name="fx_ui_glitch">Glitch Shift</string>
+    <string name="fx_ui_glitch_desc">RGB-split text jitter · Ringing</string>
+    <string name="fx_ui_liquid">Liquid Button</string>
+    <string name="fx_ui_liquid_desc">Ripples from each press · Ringing</string>
+    <string name="fx_skin_plain">No Motion</string>
+    <string name="fx_skin_plain_sub">Turn off background flow</string>
+    <string name="skin_in_use">In use</string>
+    <string name="skin_applied_fmt">Applied: %1$s</string>
+    <string name="skin_applied_custom">Custom color applied</string>
+    <string name="skin_obsidian">Obsidian Orange</string>
+    <string name="skin_mint">Mint</string>
+    <string name="skin_ocean">Ocean Blue</string>
+    <string name="skin_violet">Violet Night</string>
+    <string name="skin_sakura">Sakura Pink</string>
+    <string name="skin_sunset">Sunset Gold</string>
+    <string name="skin_custom">Custom</string>
+    <string name="skin_preview_hint">Tap the wheel to make it yours</string>
+    <string name="skin_current_fmt">Current · %1$s</string>
+    <string name="color_picker_title">Custom color</string>
+    <string name="color_picker_sub">Turn the wheel, then pick a tone</string>
+    <string name="color_target_accent">Editing text color · Swipe left or right</string>
+    <string name="color_target_bg">Editing background · Dark tones only for legibility</string>
+    <string name="color_picker_apply">Apply</string>
+    <string name="color_tone_light">Light</string>
+    <string name="color_tone_deep">Deep</string>
+    <string name="back">Back</string>
+    <string name="empty_title">No alarms yet</string>
+    <string name="empty_desc">Tap + in the top right, then let jumping jacks wake you up tomorrow.</string>
+    <string name="streak_home_fmt">Streak: %1$s · Total: %2$d</string>
+    <string name="streak_home_broken_fmt">Streak broken · Total: %1$d</string>
+    <string name="streak_celebration_title_fmt">Streak: %1$s!</string>
+    <string name="streak_celebration_message">You’re building a real habit. Keep it going.</string>
+    <string name="streak_celebration_total_fmt">Total successes: %1$d</string>
+    <string name="streak_next_fmt">Next celebration: day %1$d</string>
+    <string name="streak_continue">Continue</string>
+    <string name="streak_celebration_icon">Celebration</string>
+    <plurals name="streak_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="repeat_never">Never</string>
+    <string name="repeat_selected_fmt">%1$s</string>
+    <string-array name="weekday_full">
+        <item>Every Monday</item>
+        <item>Every Tuesday</item>
+        <item>Every Wednesday</item>
+        <item>Every Thursday</item>
+        <item>Every Friday</item>
+        <item>Every Saturday</item>
+        <item>Every Sunday</item>
+    </string-array>
+    <string-array name="weekday_short">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
+    <string name="list_separator">", "</string>
+
+    <string name="new_alarm">New alarm</string>
+    <string name="edit_alarm">Edit alarm</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_confirm">This cannot be undone. Delete this alarm?</string>
+    <string name="repeat_label">Repeat</string>
+    <string name="exercise_label">Task</string>
+    <string name="reps_label">Target reps</string>
+    <string name="ai_counting">AI counting</string>
+    <string name="reps_preview">20 jumping jacks</string>
+    <string name="reps_preview_value">20 reps</string>
+    <string name="word_count_preview_value">10 words</string>
+    <string name="word_task_name">Vocabulary</string>
+    <string name="word_task_tag">Spell</string>
+    <string name="word_mode_choice">Choice</string>
+    <string name="word_mode_spell">Spell</string>
+    <string name="word_mode_label">Vocabulary mode</string>
+    <string name="word_count_label">Target words</string>
+    <string name="word_count_fmt">%1$d words</string>
+    <string name="word_count_value_fmt">%1$d words</string>
+    <string name="word_book_label">Word list</string>
+    <string name="word_book_global_fmt">%1$s · Global</string>
+    <string name="word_book_dialog_title">Choose word list (global)</string>
+    <string name="word_book_cet4">CET-4</string>
+    <string name="word_book_cet6">CET-6</string>
+    <string name="word_list_unavailable">Word list failed to load. This task is unavailable.</string>
+    <string name="word_summary_fmt">%1$d words · %2$s</string>
+    <string name="jump_summary_fmt">%1$d jumping jacks</string>
+    <string name="reps_unit">reps</string>
+    <string name="reps_value_fmt">%1$d reps</string>
+    <string name="once">Once</string>
+    <string name="every_day">Every day</string>
+    <string name="workdays">Weekdays</string>
+    <string name="weekend">Weekends</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="exercise_jumping_jack">Jumping jacks</string>
+    <string name="exercise_squat">Squats</string>
+    <string name="exercise_pushup">Push-ups</string>
+
+    <string name="ringing_title">Time to get up</string>
+    <string name="ringing_reps_fmt">Complete %1$d jumping jacks to stop the alarm</string>
+    <string name="ringing_words_fmt">Complete %1$d word questions to stop the alarm</string>
+    <string name="ringing_start">Start challenge</string>
+    <string name="ringing_hint">Turn on the camera and AI will count your reps</string>
+    <string name="ringing_word_hint">Read the Chinese and spell the English word</string>
+    <string name="ringing_choice_hint">Read the Chinese and pick the English word</string>
+    <string name="ringing_back_hint">Finish the workout to stop the alarm</string>
+    <string name="ringing_word_back_hint">Finish the words to stop the alarm</string>
+    <string name="ringing_volume_locked">Alarm volume is locked at max</string>
+    <string name="ringing_vibration_boost">Silent / DND detected — switched to strong vibration</string>
+    <string name="ringing_timeout">30 minutes elapsed. The alarm has stopped automatically.</string>
+
+    <string name="word_page_fmt">Word %1$d / %2$d</string>
+    <string name="word_input_hint">Type the English spelling</string>
+    <string name="word_submit">Submit</string>
+    <string name="word_hint_default">Read the Chinese and spell the English word</string>
+    <string name="word_choice_hint">Choose the English word</string>
+    <string name="word_play">Play pronunciation</string>
+    <string name="word_tts_missing_title">English voice missing</string>
+    <string name="word_tts_missing_desc">No US English voice is available for system TTS. Install an offline voice pack to hear pronunciation. You can still answer the questions.</string>
+    <string name="word_tts_settings">Get voice</string>
+    <string name="word_tts_later">Answer now</string>
+    <string name="word_review_wrong">Missed</string>
+    <string name="word_hint_first_fmt">Hint: starts with %1$s</string>
+    <string name="word_hint_length_fmt">Hint: starts with %1$s · %2$d letters</string>
+    <string name="word_answer_fmt">Answer: %1$s — moving on</string>
+    <string name="word_good">good!</string>
+    <string name="word_review_title">Done!</string>
+    <string name="word_review_sub_fmt">%1$d words reviewed</string>
+    <string name="word_review_done">Finish</string>
+
+    <string name="exercise_title">Jumping Jack Challenge</string>
+    <string name="exercise_prepare">Ready</string>
+    <string name="exercise_hint_stand">Stand back so your whole body is in frame</string>
+    <string name="exercise_hint_open">Jump up and raise both arms overhead</string>
+    <string name="exercise_hint_closed">Nice! Feet together, arms down</string>
+    <string name="exercise_hint_too_close">Too close — take a step back</string>
+    <string name="exercise_hint_no_person">No one detected — stand in front of the camera</string>
+    <string name="exercise_hint_feet">Step back so your feet are in frame</string>
+    <string name="exercise_hint_arms">Keep both hands in frame</string>
+    <string name="exercise_switch_camera">Switch camera</string>
+    <string name="exercise_success">Done!</string>
+    <string name="exercise_success_sub">Alarm off. Good morning.</string>
+    <string name="exercise_perm_title">Camera permission needed</string>
+    <string name="exercise_perm_desc">AI needs the camera to confirm your workout. Without it, the alarm will not stop until the 30-minute safety timeout.</string>
+    <string name="exercise_perm_grant">Allow camera</string>
+
+    <string name="notif_channel_alarm">Alarm ringing</string>
+    <string name="notif_channel_alarm_desc">Full-screen alert when an alarm fires</string>
+    <string name="notif_ringing_text">Finish your jumping jacks to stop it</string>
+
+    <string name="toast_perm_notification">Notifications are off — full-screen alarms may not appear</string>
+    <string name="toast_alarm_saved">Alarm saved</string>
+    <string name="toast_alarm_deleted">Alarm deleted</string>
+    <string name="toast_exact_denied">Allow “Alarms &amp; reminders” in system settings</string>
+
+    <string name="fsi_title">Turn on full-screen alarms</string>
+    <string name="fsi_desc">Since Android 14, full-screen alerts are only granted to calls and alarms by default. Allow full-screen notifications for Jump Alarm so the workout screen opens straight from the lock screen; otherwise you will only see a notification banner.</string>
+    <string name="fsi_open">Open settings</string>
+    <string name="fsi_later">Not now</string>
+
+    <string name="debug_menu">Debug tools</string>
+    <string name="debug_test_10s">Test alarm in 10 seconds</string>
+    <string name="debug_word_test">Vocabulary test alarm in 10 seconds (3 words)</string>
+    <string name="debug_video">Validate detection with test video</string>
+    <string name="debug_testing_scheduled">Alarm in 10 seconds</string>
+    <string name="video_title">Detection validation</string>
+    <string name="video_loading">Decoding video…</string>
+    <string name="video_stats_fmt">Frame %1$d / %2$d · Count %3$d · Arms %4$.2f · Legs %5$.2f · %6$s</string>
+    <string name="video_finished_fmt">Detection finished · %1$d jumping jacks</string>
+    <string name="video_failed_fmt">Failed: %1$s</string>
+    <string name="debug_complete">DEBUG: auto-complete</string>
+</resources>

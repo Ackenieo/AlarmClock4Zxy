@@ -15,18 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.slider.Slider;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-public class AlarmEditActivity extends AppCompatActivity {
+public class AlarmEditActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "alarm_id";
-
-    private static final String[] DAY_LABELS = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
 
     private Alarm alarm;
     private boolean isNew;
@@ -176,14 +173,7 @@ public class AlarmEditActivity extends AppCompatActivity {
             repeatSummary.setText(R.string.weekend);
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 7; i++) {
-            if ((repeatMask & (1 << i)) != 0) {
-                if (sb.length() > 0) sb.append('、');
-                sb.append(DAY_LABELS[i]);
-            }
-        }
-        repeatSummary.setText(sb.toString());
+        repeatSummary.setText(Alarm.repeatDays(this, repeatMask));
     }
 
     /** 全屏的星期选择页：点一行切换选中，返回即生效 */

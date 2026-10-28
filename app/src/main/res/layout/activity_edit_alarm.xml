@@ -190,7 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="AI 计数"
+                        android:text="@string/ai_counting"
                         android:textColor="?attr/accent"
                         android:textSize="11sp" />
                     </LinearLayout>
@@ -316,7 +316,7 @@
                         android:id="@+id/reps_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20 个"
+                        android:text="@string/reps_preview_value"
                         android:textColor="?attr/accent"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -366,7 +366,7 @@
                         android:id="@+id/word_count_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10 个"
+                        android:text="@string/word_count_preview_value"
                         android:textColor="?attr/accent"
                         android:textSize="17sp"
                         android:textStyle="bold" />

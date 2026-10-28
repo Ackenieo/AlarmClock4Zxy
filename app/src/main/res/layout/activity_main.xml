@@ -39,12 +39,25 @@
                 android:textSize="40sp"
                 android:textStyle="bold" />
 
+            <!-- 语言入口：地球 + 对话气泡 -->
+            <ImageButton
+                android:id="@+id/fab_language"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_circle_button"
+                android:contentDescription="@string/language_button"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_language"
+                android:tint="?attr/accent" />
+
             <!-- 皮肤市场入口：T 恤图标 -->
             <ImageButton
                 android:id="@+id/fab_skin"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_circle_button"
                 android:contentDescription="@string/skin_market"
                 android:scaleType="center"
@@ -53,8 +66,8 @@
 
             <ImageButton
                 android:id="@+id/fab_add"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_circle_button"
                 android:contentDescription="@string/add_alarm"
                 android:scaleType="center"
@@ -71,6 +84,17 @@
             android:text="@string/next_alarm_none"
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/streak_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="3dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="?attr/accent"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <ScrollView
             android:id="@+id/alarm_scroll"

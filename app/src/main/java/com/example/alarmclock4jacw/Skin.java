@@ -1,5 +1,7 @@
 package com.example.alarmclock4jacw;
 
+import android.content.Context;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
@@ -18,8 +20,9 @@ public final class Skin {
 
     /** 存进 SharedPreferences 的 id：预设是 "mint" 这种，自定义是 "custom:12:1" */
     public final String id;
-    /** 展示名 */
-    public final String name;
+    /** 展示名资源。切换语言后按当前 Context 实时取，不能缓存成字符串 */
+    @StringRes
+    public final int nameRes;
     /** 主题覆盖层 */
     @StyleRes
     public final int styleRes;
@@ -43,11 +46,11 @@ public final class Skin {
     @StringRes
     public final int fxNameRes;
 
-    Skin(String id, String name, int styleRes,
+    Skin(String id, @StringRes int nameRes, int styleRes,
          int accent, int deep, int soft, int on,
          int hueIndex, int toneIndex, int fxStyle, int fxNameRes) {
         this.id = id;
-        this.name = name;
+        this.nameRes = nameRes;
         this.styleRes = styleRes;
         this.accent = accent;
         this.deep = deep;
@@ -61,5 +64,9 @@ public final class Skin {
 
     public boolean isCustom() {
         return hueIndex >= 0;
+    }
+
+    public String name(Context context) {
+        return context.getString(nameRes);
     }
 }

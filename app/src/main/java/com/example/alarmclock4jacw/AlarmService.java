@@ -143,6 +143,11 @@ public class AlarmService extends Service {
         }
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(AppLanguage.wrap(base));
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -231,6 +236,8 @@ public class AlarmService extends Service {
             if (System.currentTimeMillis() >= deadlineAt) {
                 Log.i(TAG, "ring deadline reached, auto-stop as the last resort");
                 timedOut = true;
+                // 真闹钟响满 30 分钟仍没完成：连续记录中断；测试闹钟(id=-1)不算
+                if (alarmId >= 0) StreakStore.recordMissed(AlarmService.this);
                 stopRinging();
                 return;
             }

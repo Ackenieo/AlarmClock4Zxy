@@ -83,7 +83,7 @@
                     android:id="@+id/reps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="20 个开合跳"
+                    android:text="@string/reps_preview"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>

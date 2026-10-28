@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -29,7 +28,7 @@ import java.util.Locale;
  * 服务侧的看门狗还会把被划掉的界面重新拉回来。
  * 进入时尽可能把设备锁进锁定任务（Kiosk），阻止用户回到桌面或锁屏逃脱。
  */
-public class RingingActivity extends AppCompatActivity {
+public class RingingActivity extends BaseActivity {
 
     /**
      * 测试用：直接 am start 本页时带上这个 extra，页面就不会因为「服务没在响」而自动关闭。
@@ -48,11 +47,20 @@ public class RingingActivity extends AppCompatActivity {
     private String taskType = Alarm.TASK_JUMPING_JACK;
     private long alarmId = -1L;
     private boolean debugKeep;
+    private boolean successHandled;
+    /** 运动/单词页还在前台时，服务可能已经被子页面停掉，别让看门狗提前收掉本页 */
+    private boolean taskRunning;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable tick = new Runnable() {
         @Override
         public void run() {
+            // 任务已经完成，下面要弹庆祝窗；不要再让看门狗把页面收掉
+            if (successHandled) return;
+            if (taskRunning) {
+                handler.postDelayed(this, 1000);
+                return;
+            }
             updateClock();
             updateHint();
             // 服务侧 30 分钟兜底停止后，界面自己收掉；锁定任务必须先退出，否则设备会留在锁死状态
@@ -105,6 +113,7 @@ public class RingingActivity extends AppCompatActivity {
         exerciseLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    taskRunning = false;
                     if (result.getResultCode() == RESULT_OK) dismissAlarm();
                 });
 
@@ -122,6 +131,7 @@ public class RingingActivity extends AppCompatActivity {
                 i.putExtra(AlarmService.EXTRA_REPS, reps);
             }
             i.putExtra(AlarmService.EXTRA_ID, alarmId);
+            taskRunning = true;
             exerciseLauncher.launch(i);
         });
 
@@ -208,10 +218,26 @@ public class RingingActivity extends AppCompatActivity {
     }
 
     private void dismissAlarm() {
+        if (successHandled) return;
+        successHandled = true;
+        handler.removeCallbacks(tick);
+
         // 设备所有者锁定的任务中，finish 前必须先退出锁定，否则任务无法结束
         KioskController.exitLockTask(this);
         AlarmService.stop(this);
-        finish();
+
+        // 调试直启和 10 秒测试闹钟（id=-1）不污染真实连续记录
+        if (debugKeep || alarmId < 0) {
+            finish();
+            return;
+        }
+
+        StreakStore.Record record = StreakStore.recordSuccess(this);
+        if (record.celebrated) {
+            new CelebrationDialog(this, record, this::finish).show();
+        } else {
+            finish();
+        }
     }
 
     private void closeAndUnlock() {

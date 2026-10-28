@@ -10,7 +10,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.mlkit.vision.common.InputImage;
@@ -28,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 用来验证/回归识别算法（不依赖真人站在镜头前）。
  * 长按标题可进入。
  */
-public class VideoTestActivity extends AppCompatActivity {
+public class VideoTestActivity extends BaseActivity {
 
     private static final String TAG = "JJVIDEO";
     private static final String ASSET = "test_jumpingjack.mp4";
@@ -106,10 +105,10 @@ public class VideoTestActivity extends AppCompatActivity {
                 }
             }
             Log.i(TAG, "FINISHED total reps = " + counter.getCount());
-            ui.post(() -> stats.setText("识别结束 · 共 " + counter.getCount() + " 个开合跳"));
+            ui.post(() -> stats.setText(getString(R.string.video_finished_fmt, counter.getCount())));
         } catch (Exception e) {
             Log.e(TAG, "video test failed", e);
-            ui.post(() -> stats.setText("失败：" + e));
+            ui.post(() -> stats.setText(getString(R.string.video_failed_fmt, e)));
         } finally {
             detector.close();
             try {
