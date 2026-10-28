@@ -57,6 +57,8 @@ public class AlarmEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SkinStore.applyTheme(this);
         setContentView(R.layout.activity_edit_alarm);
+        // 全屏滚动：顶部让出状态栏，滚上去的内容在状态栏下沿裁掉
+        SystemBars.insetTop(findViewById(R.id.edit_scroll));
 
         SkinStore.applyFx(this.findViewById(R.id.flow_bg));
         FxStore.applyFlowBg(this, findViewById(R.id.flow_bg));

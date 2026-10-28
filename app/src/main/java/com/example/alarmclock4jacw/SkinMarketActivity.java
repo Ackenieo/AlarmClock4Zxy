@@ -80,6 +80,8 @@ public class SkinMarketActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SkinStore.applyTheme(this);
         setContentView(R.layout.activity_skin_market);
+        // 全屏滚动：顶部让出状态栏，滚上去的内容在状态栏下沿裁掉
+        SystemBars.insetTop(findViewById(R.id.market_scroll));
 
         store = SkinStore.get(this);
         grid = findViewById(R.id.skin_grid);

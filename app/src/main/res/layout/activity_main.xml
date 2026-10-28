@@ -17,6 +17,7 @@
 
         <!-- 大标题 + 右上角圆形加号 -->
         <LinearLayout
+            android:id="@+id/header_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"

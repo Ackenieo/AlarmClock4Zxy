@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SkinStore.applyTheme(this);
         setContentView(R.layout.activity_main);
+        // 标题栏固定在最上面，状态栏高度要自己让（Android 15 起强制 edge-to-edge）
+        SystemBars.addTop(findViewById(R.id.header_row), 12f);
 
         themeSignature = SkinStore.get(this).themeSignature();
 
