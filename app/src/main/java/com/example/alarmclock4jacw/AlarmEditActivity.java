@@ -1,10 +1,17 @@
 package com.example.alarmclock4jacw;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioAttributes;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -15,18 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.slider.Slider;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
 
-public class AlarmEditActivity extends AppCompatActivity {
+public class AlarmEditActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "alarm_id";
-
-    private static final String[] DAY_LABELS = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
 
     private Alarm alarm;
     private boolean isNew;
@@ -48,6 +54,12 @@ public class AlarmEditActivity extends AppCompatActivity {
     private String wordMode = Alarm.TASK_WORD_CHOICE;
     private boolean wordAvailable;
     private TextView repeatSummary;
+    private TextView ringtoneValue;
+    /** 当前选中的铃声 Uri；null 表示用 App 内置默认提示音。 */
+    private Uri selectedRingtone;
+    /** 试听用的临时播放器，随弹窗关闭释放。 */
+    private Ringtone previewRingtone;
+    private android.media.MediaPlayer previewBeep;
 
     /** 重复掩码，bit0 = 周一 … bit6 = 周日，0 = 只响一次 */
     private int repeatMask;
@@ -89,6 +101,7 @@ public class AlarmEditActivity extends AppCompatActivity {
         repsSlider = findViewById(R.id.reps_slider);
         repsValue = findViewById(R.id.reps_value);
         repeatSummary = findViewById(R.id.repeat_summary);
+        ringtoneValue = findViewById(R.id.ringtone_value);
         repsSection = findViewById(R.id.reps_section);
         wordSection = findViewById(R.id.word_section);
         wordCountSlider = findViewById(R.id.word_count_slider);
@@ -101,6 +114,7 @@ public class AlarmEditActivity extends AppCompatActivity {
 
         setupPickers();
         setupRepeatRow();
+        setupRingtoneRow();
         setupSlider();
         setupTaskSelector();
         setupWordSlider();
@@ -176,14 +190,7 @@ public class AlarmEditActivity extends AppCompatActivity {
             repeatSummary.setText(R.string.weekend);
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 7; i++) {
-            if ((repeatMask & (1 << i)) != 0) {
-                if (sb.length() > 0) sb.append('、');
-                sb.append(DAY_LABELS[i]);
-            }
-        }
-        repeatSummary.setText(sb.toString());
+        repeatSummary.setText(Alarm.repeatDays(this, repeatMask));
     }
 
     /** 全屏的星期选择页：点一行切换选中，返回即生效 */
@@ -252,6 +259,194 @@ public class AlarmEditActivity extends AppCompatActivity {
 
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    // -------------------------------------------------------------- 选取铃声
+    private void setupRingtoneRow() {
+        if (alarm.ringtone != null && !alarm.ringtone.isEmpty()) {
+            try {
+                selectedRingtone = Uri.parse(alarm.ringtone);
+            } catch (Exception ignored) {
+                selectedRingtone = null;
+            }
+        }
+        updateRingtoneValue();
+        findViewById(R.id.ringtone_row).setOnClickListener(v -> showRingtoneDialog());
+    }
+
+    private void updateRingtoneValue() {
+        if (selectedRingtone == null) {
+            ringtoneValue.setText(R.string.ringtone_default);
+            return;
+        }
+        Ringtone r = RingtoneManager.getRingtone(this, selectedRingtone);
+        String name = r != null ? r.getTitle(this) : getString(R.string.ringtone_default);
+        ringtoneValue.setText(name);
+    }
+
+    /** 类 Apple 的铃声选择页：单选 + 勾选 + 点击试听；返回即生效。 */
+    private void showRingtoneDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_ringtone);
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(SkinStore.bgColor(this)));
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            window.setStatusBarColor(SkinStore.bgColor(this));
+            window.setNavigationBarColor(SkinStore.bgColor(this));
+        }
+
+        TextView title = dialog.findViewById(R.id.ringtone_title);
+        if (title != null) title.setText(R.string.ringtone_dialog_title);
+
+        LinearLayout list = dialog.findViewById(R.id.ringtone_list);
+
+        // 选项：默认（内置提示音）+ 系统闹钟/来电铃声，按 Uri 去重
+        ArrayList<RingtoneOption> options = new ArrayList<>();
+        options.add(new RingtoneOption(null, getString(R.string.ringtone_default)));
+        collectRingtones(options, RingtoneManager.TYPE_ALARM);
+        collectRingtones(options, RingtoneManager.TYPE_RINGTONE);
+
+        final Uri[] picked = {selectedRingtone};
+        int accent = SkinStore.accent(this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        for (int i = 0; i < options.size(); i++) {
+            final RingtoneOption opt = options.get(i);
+
+            View row = inflater.inflate(R.layout.item_ringtone, list, false);
+            TextView name = row.findViewById(R.id.ringtone_name);
+            ImageView check = row.findViewById(R.id.ringtone_check);
+            name.setText(opt.title);
+            check.setColorFilter(accent);
+            check.setVisibility(isSelected(opt.uri, picked[0]) ? View.VISIBLE : View.INVISIBLE);
+
+            row.setOnClickListener(v -> {
+                picked[0] = opt.uri;
+                // 更新所有勾选标记
+                for (int j = 0; j < list.getChildCount(); j += 2) {
+                    View child = list.getChildAt(j);
+                    ImageView c = child.findViewById(R.id.ringtone_check);
+                    if (c != null) {
+                        RingtoneOption o = options.get(j / 2);
+                        c.setVisibility(isSelected(o.uri, picked[0]) ? View.VISIBLE : View.INVISIBLE);
+                    }
+                }
+                previewRingtone(opt.uri);
+            });
+            list.addView(row);
+
+            if (i < options.size() - 1) {
+                View divider = new View(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
+                lp.setMarginStart(dp(20));
+                divider.setLayoutParams(lp);
+                divider.setBackgroundColor(SkinStore.strokeColor(this));
+                list.addView(divider);
+            }
+        }
+
+        dialog.findViewById(R.id.btn_ringtone_back).setOnClickListener(v -> dialog.dismiss());
+        dialog.setOnDismissListener(d -> {
+            stopPreview();
+            selectedRingtone = picked[0];
+            updateRingtoneValue();
+        });
+        dialog.show();
+    }
+
+    private static boolean isSelected(Uri uri, Uri picked) {
+        if (uri == null) return picked == null;
+        return uri.equals(picked);
+    }
+
+    /** 收集指定类型的系统铃声，按 Uri 去重追加到 out。 */
+    private void collectRingtones(ArrayList<RingtoneOption> out, int type) {
+        HashSet<String> seen = new HashSet<>();
+        for (RingtoneOption o : out) {
+            if (o.uri != null) seen.add(o.uri.toString());
+        }
+        try {
+            RingtoneManager rm = new RingtoneManager(this);
+            rm.setType(type);
+            android.database.Cursor cursor = rm.getCursor();
+            int titleCol = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            while (cursor.moveToNext()) {
+                Uri uri = rm.getRingtoneUri(cursor.getPosition());
+                if (uri == null) continue;
+                String key = uri.toString();
+                if (seen.contains(key)) continue;
+                seen.add(key);
+                String title = titleCol >= 0 ? cursor.getString(titleCol) : "";
+                if (title == null || title.isEmpty()) {
+                    Ringtone r = RingtoneManager.getRingtone(this, uri);
+                    title = r != null ? r.getTitle(this) : "";
+                }
+                if (title == null || title.isEmpty()) title = getString(R.string.ringtone_default);
+                out.add(new RingtoneOption(uri, title));
+            }
+            cursor.close();
+        } catch (Exception ignored) {
+            // 某些 ROM 拿不到铃声表：至少保留「默认」一项
+        }
+    }
+
+    /** 选中后试听：默认项播内置提示音，其余播对应铃声（仅一次）。 */
+    private void previewRingtone(Uri uri) {
+        stopPreview();
+        try {
+            if (uri == null) {
+                previewBeep = new android.media.MediaPlayer();
+                previewBeep.setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM).build());
+                android.content.res.AssetFileDescriptor afd =
+                        getResources().openRawResourceFd(R.raw.alarm_beep);
+                previewBeep.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                afd.close();
+                previewBeep.prepare();
+                previewBeep.start();
+            } else {
+                previewRingtone = RingtoneManager.getRingtone(this, uri);
+                if (previewRingtone != null) {
+                    previewRingtone.setAudioAttributes(new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_ALARM).build());
+                    previewRingtone.play();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void stopPreview() {
+        if (previewRingtone != null) {
+            try {
+                previewRingtone.stop();
+            } catch (Exception ignored) {
+            }
+            previewRingtone = null;
+        }
+        if (previewBeep != null) {
+            try {
+                previewBeep.stop();
+                previewBeep.release();
+            } catch (Exception ignored) {
+            }
+            previewBeep = null;
+        }
+    }
+
+    /** 简单容器：铃声 Uri（null = 默认内置提示音）+ 展示名。 */
+    private static class RingtoneOption {
+        final Uri uri;
+        final String title;
+
+        RingtoneOption(Uri uri, String title) {
+            this.uri = uri;
+            this.title = title;
+        }
     }
 
     private void setupSlider() {
@@ -370,6 +565,7 @@ public class AlarmEditActivity extends AppCompatActivity {
         alarm.hour = hourPicker.getValue();
         alarm.minute = minutePicker.getValue();
         alarm.repeatMask = repeatMask;
+        alarm.ringtone = selectedRingtone != null ? selectedRingtone.toString() : null;
         alarm.targetReps = (int) repsSlider.getValue();
         alarm.targetWords = (int) wordCountSlider.getValue();
         alarm.enabled = true;

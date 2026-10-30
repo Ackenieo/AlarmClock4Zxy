@@ -65,6 +65,7 @@ public class AlarmService extends Service {
     private static final String KEY_WORD_START = "word_start";
     private static final String KEY_WORD_BOOK = "word_book";
     private static final String KEY_WORD_SESSION = "word_session";
+    private static final String KEY_RINGTONE = "ringtone";
 
     /** 硬兜底：连续响满 30 分钟自动停止 */
     private static final long MAX_RING_MILLIS = 30 * 60 * 1000L;
@@ -81,6 +82,7 @@ public class AlarmService extends Service {
     public static final String EXTRA_WORD_START = "word_start";
     public static final String EXTRA_WORD_BOOK = "word_book";
     public static final String EXTRA_WORD_SESSION = "word_session";
+    public static final String EXTRA_RINGTONE = "ringtone";
 
     /** 供界面判断当前是否正在响铃 */
     public static volatile boolean ringing = false;
@@ -114,6 +116,8 @@ public class AlarmService extends Service {
     private int wordStart = 0;
     private String wordBook = WordStore.BOOK_CET4;
     private String wordSessionId = "";
+    /** 选中的铃声 Uri 字符串；空表示用内置默认提示音 R.raw.alarm_beep。 */
+    private String ringtoneUri = "";
     /** 墙钟截止时间：SystemClock.elapsedRealtime 会随重启归零，用 currentTimeMillis 才扛得住进程重启 */
     private long deadlineAt = 0L;
 
@@ -130,6 +134,9 @@ public class AlarmService extends Service {
             i.putExtra(EXTRA_WORD_BOOK, book);
             i.putExtra(EXTRA_WORD_START, WordStore.nextIndex(ctx, book));
         }
+        if (alarm.ringtone != null && !alarm.ringtone.isEmpty()) {
+            i.putExtra(EXTRA_RINGTONE, alarm.ringtone);
+        }
         return i;
     }
 
@@ -141,6 +148,11 @@ public class AlarmService extends Service {
         } catch (Exception e) {
             Log.w(TAG, "stop service failed", e);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(AppLanguage.wrap(base));
     }
 
     @Nullable
@@ -172,6 +184,8 @@ public class AlarmService extends Service {
             }
             wordBook = WordStore.normalizeBook(wordBook);
             wordSessionId = String.valueOf(System.currentTimeMillis());
+            ringtoneUri = intent.getStringExtra(EXTRA_RINGTONE);
+            if (ringtoneUri == null) ringtoneUri = "";
             timedOut = false;
             deadlineAt = System.currentTimeMillis() + MAX_RING_MILLIS;
         } else if (alarmId < 0 && !restoreState()) {
@@ -231,6 +245,8 @@ public class AlarmService extends Service {
             if (System.currentTimeMillis() >= deadlineAt) {
                 Log.i(TAG, "ring deadline reached, auto-stop as the last resort");
                 timedOut = true;
+                // 真闹钟响满 30 分钟仍没完成：连续记录中断；测试闹钟(id=-1)不算
+                if (alarmId >= 0) StreakStore.recordMissed(AlarmService.this);
                 stopRinging();
                 return;
             }
@@ -278,16 +294,27 @@ public class AlarmService extends Service {
 
     private void startSound() {
         if (player != null) return;
+        // 选了系统铃声就播它，失败（铃声被删/无权限）再回退内置提示音
+        boolean useCustom = ringtoneUri != null && !ringtoneUri.isEmpty();
         try {
             player = new MediaPlayer();
             player.setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
-            android.content.res.AssetFileDescriptor afd =
-                    getResources().openRawResourceFd(R.raw.alarm_beep);
-            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            afd.close();
+            if (useCustom) {
+                try {
+                    player.setDataSource(this, android.net.Uri.parse(ringtoneUri));
+                } catch (Exception ex) {
+                    useCustom = false; // 自定义铃声加载失败，落回内置
+                }
+            }
+            if (!useCustom) {
+                android.content.res.AssetFileDescriptor afd =
+                        getResources().openRawResourceFd(R.raw.alarm_beep);
+                player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                afd.close();
+            }
             player.setLooping(true);
             player.setVolume(1f, 1f);
             player.prepare();
@@ -457,6 +484,7 @@ public class AlarmService extends Service {
                 .putInt(KEY_WORD_START, wordStart)
                 .putString(KEY_WORD_BOOK, wordBook)
                 .putString(KEY_WORD_SESSION, wordSessionId)
+                .putString(KEY_RINGTONE, ringtoneUri)
                 .apply();
     }
 
@@ -481,6 +509,8 @@ public class AlarmService extends Service {
         if (wordSessionId == null || wordSessionId.isEmpty()) {
             wordSessionId = String.valueOf(System.currentTimeMillis());
         }
+        ringtoneUri = p.getString(KEY_RINGTONE, "");
+        if (ringtoneUri == null) ringtoneUri = "";
         deadlineAt = deadline;
         return true;
     }

@@ -28,6 +28,8 @@ public class Alarm {
     public String taskType = TASK_JUMPING_JACK;
     /** 预留商城词库 ID；为空时使用全局词库设置 */
     public String wordBookId;
+    /** 选中铃声的 Uri 字符串；为空表示用 App 内置默认提示音（R.raw.alarm_beep）。 */
+    public String ringtone;
 
     public Alarm() {
         this.id = System.currentTimeMillis();
@@ -57,8 +59,7 @@ public class Alarm {
         if (isWordTask()) {
             return ctx.getString(R.string.word_summary_fmt, targetWords, WordStore.bookLabel(ctx));
         }
-        return ctx.getString(R.string.reps_value_fmt, targetReps)
-                + ctx.getString(R.string.exercise_jumping_jack);
+        return ctx.getString(R.string.jump_summary_fmt, targetReps);
     }
 
     /** 响铃页/通知里的目标文案 */
@@ -104,12 +105,18 @@ public class Alarm {
         if (repeatMask == 0x7F) return ctx.getString(R.string.every_day);
         if (repeatMask == 0x1F) return ctx.getString(R.string.workdays);
         if (repeatMask == 0x60) return ctx.getString(R.string.weekend);
-        String[] names = {"一", "二", "三", "四", "五", "六", "日"};
+        return repeatDays(ctx, repeatMask);
+    }
+
+    /** 任意星期组合的短文案，例如「周一、周三」/「Mon, Wed」。 */
+    public static String repeatDays(Context ctx, int mask) {
+        String[] names = ctx.getResources().getStringArray(R.array.weekday_short);
+        String separator = ctx.getString(R.string.list_separator);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 7; i++) {
-            if ((repeatMask & (1 << i)) != 0) {
-                if (sb.length() > 0) sb.append('、');
-                sb.append('周').append(names[i]);
+            if ((mask & (1 << i)) != 0) {
+                if (sb.length() > 0) sb.append(separator);
+                sb.append(names[i]);
             }
         }
         return sb.toString();
@@ -127,6 +134,7 @@ public class Alarm {
             o.put("words", targetWords);
             o.put("task", taskType);
             if (wordBookId != null && !wordBookId.isEmpty()) o.put("wordBook", wordBookId);
+            if (ringtone != null && !ringtone.isEmpty()) o.put("ringtone", ringtone);
         } catch (JSONException ignored) {
         }
         return o;
@@ -146,6 +154,8 @@ public class Alarm {
         a.taskType = isWordTask(task) ? task : TASK_JUMPING_JACK;
         String book = o.optString("wordBook", "");
         a.wordBookId = book.isEmpty() ? null : book;
+        String tone = o.optString("ringtone", "");
+        a.ringtone = tone.isEmpty() ? null : tone;
         return a;
     }
 

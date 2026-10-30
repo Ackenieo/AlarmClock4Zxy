@@ -15,6 +15,9 @@
 
 | 能力    | 说明                                                                    |
 | ----- | --------------------------------------------------------------------- |
+| 界面语言  | 右上角地球按钮打开语言选择器：简体中文 / English / 日本語 / Français / 跟随系统；立即生效并记住选择              |
+| 成功记录  | 每完成一次任务累计次数 +1；连续天数达到 1 / 3 / 6 / 10 / 15 / 20 天（之后每 5 天）弹窗庆祝；30 分钟超时或隔天中断后从 1 重新计数 |
+| 删除闹钟  | 左滑先露出红色圆形垃圾桶；继续左滑，红色按钮随距离伸长，超过约 58% 松手即删除；删除区使用与闹钟行相同的玻璃底色，也可以点垃圾桶删除 |
 | 闹钟管理  | 添加 / 编辑 / 删除 / 启停；精确到分钟；支持按周重复（任选星期几）                                 |
 | 任务类型  | 开合跳 / 背单词；编辑页横向滑动卡片，点击选中（深蹲、俯卧撑敬请期待）                          |
 | 目标数量  | 开合跳 5~60 个（默认 20）；背单词 5~60 个（默认 10）                                   |
@@ -40,6 +43,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
 - `minSdk 26 / targetSdk 37 / Java 11`
+- 如果 Android Studio 报 `SDK location not found`，在项目根目录创建 `local.properties` 指向本机 Android SDK（该文件已被 Git 忽略），或通过 `Settings → Languages & Frameworks → Android SDK` 配置后重新 Sync
 - 首次启动会申请通知权限；Android 14+ 还会引导开启「全屏通知」（见下）
 - 添加闹钟后长按首页标题可打开调试工具：**10 秒后测试响铃**、**10 秒后背单词测试响铃**、**用测试视频验证识别**
 
@@ -176,6 +180,10 @@ adb shell dpm remove-active-admin com.example.alarmclock4jacw/.AlarmDeviceAdminR
 ```
 app/src/main/java/com/example/alarmclock4jacw/
 ├── MainActivity.java          闹钟列表 / 权限引导 / 调试入口
+├── AlarmApplication.java      进程级 Context（让服务/通知跟随界面语言）
+├── AppLanguage.java           语言存档与 Context 包装
+├── BaseActivity.java          所有页面统一套用界面语言
+├── LanguageDialog.java        跟随系统 / 简体中文 / English 选择弹窗
 ├── AlarmEditActivity.java     时间、重复、任务类型与目标数量编辑
 ├── RingingActivity.java       锁屏响铃页（无关闭入口，拦音量键与返回键）
 ├── ExerciseActivity.java      CameraX + ML Kit 实时识别（无退出入口）
@@ -185,6 +193,11 @@ app/src/main/java/com/example/alarmclock4jacw/
 ├── Word.java                  单词模型、答案归一化、顺序抽词
 ├── SpellingEditText.java      禁联想 / 禁粘贴的拼写输入框
 ├── Alarm.java                 闹钟模型（含下次触发时间计算）
+├── StreakStore.java           成功次数 / 连续天数 / 中断重置
+├── StreakRules.java           庆祝节点：1、3、6、10、15、20，之后每 5 天
+├── CelebrationDialog.java     连续达成庆祝弹窗
+├── DeletePillView.java        左滑删除的伸缩红色药丸
+├── SwipeRevealLayout.java     左滑手势、吸附与删除阈值
 ├── AlarmStore.java            SharedPreferences + JSON 持久化
 ├── AlarmScheduler.java        AlarmManager 精确调度
 ├── AlarmReceiver.java         到点广播

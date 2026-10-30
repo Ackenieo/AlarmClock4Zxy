@@ -10,6 +10,8 @@
     <color name="accent_deep">#FFCC4F1F</color>
     <color name="on_accent">#FF1A0C05</color>
     <color name="accent_soft">#FF241812</color>
+    <!-- 闹钟行玻璃底色；删除区也用同一层色，左滑后不会像浮在另一层 -->
+    <color name="row_glass">#14FFFFFF</color>
 
     <color name="mint">#FF35D0A5</color>
     <color name="danger">#FFFF5A5F</color>

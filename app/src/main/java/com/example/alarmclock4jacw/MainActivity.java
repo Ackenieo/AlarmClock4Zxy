@@ -27,7 +27,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -36,10 +35,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private LinearLayout container;
     private TextView subtitle;
+    private TextView streakSummary;
     private AlarmStore store;
     private ParticleLayer particles;
     /** 给粒子层换算坐标用，避免每次点击都 new 一个 */
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         container = findViewById(R.id.alarm_container);
         subtitle = findViewById(R.id.subtitle);
+        streakSummary = findViewById(R.id.streak_summary);
         store = AlarmStore.get(this);
 
         editLauncher = registerForActivityResult(
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.fab_skin).setOnClickListener(v ->
                 startActivity(new Intent(this, SkinMarketActivity.class)));
+
+        findViewById(R.id.fab_language).setOnClickListener(v ->
+                new LanguageDialog(this).show());
 
         findViewById(R.id.title).setOnLongClickListener(v -> {
             showDebugMenu();
@@ -193,6 +197,27 @@ public class MainActivity extends AppCompatActivity {
             for (Alarm a : alarms) container.addView(buildItem(a));
         }
         updateSubtitle();
+        updateStreakSummary();
+    }
+
+    private void updateStreakSummary() {
+        StreakStore.Snapshot snapshot = StreakStore.snapshot(this);
+        if (snapshot.total <= 0) {
+            streakSummary.setVisibility(View.GONE);
+            return;
+        }
+
+        if (snapshot.active) {
+            int days = Math.max(1, snapshot.streak);
+            String dayText = getResources().getQuantityString(
+                    R.plurals.streak_days, days, days);
+            streakSummary.setText(getString(R.string.streak_home_fmt,
+                    dayText, snapshot.total));
+        } else {
+            streakSummary.setText(getString(R.string.streak_home_broken_fmt,
+                    snapshot.total));
+        }
+        streakSummary.setVisibility(View.VISIBLE);
     }
 
     private void updateSubtitle() {
@@ -280,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** 把时间戳说成"今天 07:00 / 明天 07:00 / 周三 07:00" */
-    public static String describe(long millis) {
+    private String describe(long millis) {
         Calendar now = Calendar.getInstance();
         Calendar t = Calendar.getInstance();
         t.setTimeInMillis(millis);
@@ -294,10 +319,11 @@ public class MainActivity extends AppCompatActivity {
         today.set(Calendar.MILLISECOND, 0);
         long days = (millis - today.getTimeInMillis()) / (24L * 3600 * 1000);
 
-        if (days <= 0) return "今天 " + hm;
-        if (days == 1) return "明天 " + hm;
-        String[] names = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
-        return names[t.get(Calendar.DAY_OF_WEEK) - 1] + " " + hm;
+        if (days <= 0) return getString(R.string.today_fmt, hm);
+        if (days == 1) return getString(R.string.tomorrow_fmt, hm);
+        String[] names = getResources().getStringArray(R.array.weekday_short);
+        return getString(R.string.weekday_time_fmt,
+                names[t.get(Calendar.DAY_OF_WEEK) - 1], hm);
     }
 
     private void showDebugMenu() {

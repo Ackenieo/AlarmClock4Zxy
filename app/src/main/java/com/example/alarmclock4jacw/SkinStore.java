@@ -95,7 +95,7 @@ public final class SkinStore {
     private Skin preset(String id, int nameRes, int styleRes,
                         int accentRes, int deepRes, int softRes, int onRes,
                         int fxStyle, int fxNameRes) {
-        return new Skin(id, app.getString(nameRes), styleRes,
+        return new Skin(id, nameRes, styleRes,
                 ContextCompat.getColor(app, accentRes),
                 ContextCompat.getColor(app, deepRes),
                 ContextCompat.getColor(app, softRes),
@@ -128,7 +128,7 @@ public final class SkinStore {
                 Math.round(Color.green(accent) * 0.14f),
                 Math.round(Color.blue(accent) * 0.14f));
 
-        Skin skin = new Skin(id, app.getString(R.string.skin_custom), styleRes,
+        Skin skin = new Skin(id, R.string.skin_custom, styleRes,
                 accent, deep, soft, onColor(accent), h, t,
                 FlowLightView.STYLE_FLOW, R.string.fx_flow);
         customCache.put(id, skin);

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Réveil Jump</string>
+    <string name="app_subtitle">Pas d’exercice, pas de silence.</string>
+
+    <string name="home_title">Réveil</string>
+    <string name="next_alarm_none">Aucun réveil actif</string>
+    <string name="next_alarm_fmt">Prochain · %1$s</string>
+    <string name="today_fmt">Aujourd’hui %1$s</string>
+    <string name="tomorrow_fmt">Demain %1$s</string>
+    <string name="weekday_time_fmt">%1$s %2$s</string>
+    <string name="add_alarm">Ajouter un réveil</string>
+    <string name="skin_market">Skins</string>
+    <string name="language_button">Changer de langue</string>
+    <string name="language_dialog_title">Langue</string>
+    <string name="language_dialog_sub">Choisissez la langue de l’application</string>
+    <string name="language_system">Suivre le système</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+    <string name="language_japanese">日本語</string>
+    <string name="language_french">Français</string>
+    <string name="language_selected">Sélectionné</string>
+    <string name="language_note">Appliqué immédiatement</string>
+    <string name="skin_market_sub">Choisissez une palette pour l’accueil, l’édition et le réveil.</string>
+    <string name="skin_market_preview_time">Prochain · Demain 07:00</string>
+    <string name="skin_market_more">D’autres skins arrivent</string>
+    <string name="skin_section_fx">Skins animés</string>
+    <string name="skin_section_fx_sub">Un flux par skin · La dernière tuile le désactive</string>
+    <string name="skin_section_ui">Animations UI</string>
+    <string name="skin_section_ui_sub">Touchez une carte pour activer. Les aperçus sont réels.</string>
+    <string name="fx_badge">FX</string>
+    <string name="fx_state_on">Activé</string>
+    <string name="fx_state_off">Désactivé</string>
+    <string name="fx_lava">Flux de lave</string>
+    <string name="fx_aurora">Voile d’aurore</string>
+    <string name="fx_deep">Courant profond</string>
+    <string name="fx_nebula">Dérive nébuleuse</string>
+    <string name="fx_sakura">Chute de sakura</string>
+    <string name="fx_sunset">Rayons du couchant</string>
+    <string name="fx_flow">Flux lumineux</string>
+    <string name="fx_ui_glow_border">Bordure lumineuse</string>
+    <string name="fx_ui_glow_border_desc">La lumière parcourt les bords · Skins</string>
+    <string name="fx_ui_particle">Particules au toucher</string>
+    <string name="fx_ui_particle_desc">Des étincelles à chaque toucher · Accueil</string>
+    <string name="fx_ui_scanline">Lignes de balayage</string>
+    <string name="fx_ui_scanline_desc">Balayage CRT fin · Accueil</string>
+    <string name="fx_ui_neon">Pulsation néon</string>
+    <string name="fx_ui_neon_desc">Le halo du bouton respire · Réveil</string>
+    <string name="fx_ui_glitch">Glitch chromatique</string>
+    <string name="fx_ui_glitch_desc">Texte décalé RVB · Réveil</string>
+    <string name="fx_ui_liquid">Bouton liquide</string>
+    <string name="fx_ui_liquid_desc">Ondulations à chaque appui · Réveil</string>
+    <string name="fx_skin_plain">Sans animation</string>
+    <string name="fx_skin_plain_sub">Désactiver le flux de fond</string>
+    <string name="skin_in_use">Utilisé</string>
+    <string name="skin_applied_fmt">« %1$s » appliqué</string>
+    <string name="skin_applied_custom">Couleur personnalisée appliquée</string>
+    <string name="skin_obsidian">Orange obsidienne</string>
+    <string name="skin_mint">Menthe</string>
+    <string name="skin_ocean">Bleu océan</string>
+    <string name="skin_violet">Nuit violette</string>
+    <string name="skin_sakura">Rose sakura</string>
+    <string name="skin_sunset">Or du couchant</string>
+    <string name="skin_custom">Personnalisé</string>
+    <string name="skin_preview_hint">Touchez pour changer</string>
+    <string name="skin_current_fmt">Actuel · %1$s</string>
+    <string name="color_picker_title">Couleur personnalisée</string>
+    <string name="color_picker_sub">Tournez la roue, puis choisissez une nuance</string>
+    <string name="color_target_accent">Couleur du texte · Glissez à gauche ou à droite</string>
+    <string name="color_target_bg">Arrière-plan · Tons sombres uniquement pour la lisibilité</string>
+    <string name="color_picker_apply">Appliquer</string>
+    <string name="color_tone_light">Clair</string>
+    <string name="color_tone_deep">Foncé</string>
+    <string name="back">Retour</string>
+    <string name="empty_title">Aucun réveil</string>
+    <string name="empty_desc">Touchez + en haut à droite, puis laissez les jumping jacks vous réveiller demain.</string>
+    <string name="streak_home_fmt">Série : %1$s · Total : %2$d</string>
+    <string name="streak_home_broken_fmt">Série interrompue · Total : %1$d</string>
+    <string name="streak_celebration_title_fmt">Série : %1$s !</string>
+    <string name="streak_celebration_message">Vous prenez une bonne habitude. Continuez demain matin.</string>
+    <string name="streak_celebration_total_fmt">Réussites totales : %1$d</string>
+    <string name="streak_next_fmt">Prochaine célébration : jour %1$d</string>
+    <string name="streak_continue">Continuer</string>
+    <string name="streak_celebration_icon">Célébration</string>
+    <plurals name="streak_days">
+        <item quantity="one">%1$d jour</item>
+        <item quantity="other">%1$d jours</item>
+    </plurals>
+    <string name="repeat_never">Jamais</string>
+    <string name="repeat_selected_fmt">%1$s</string>
+    <string-array name="weekday_full">
+        <item>Chaque lundi</item>
+        <item>Chaque mardi</item>
+        <item>Chaque mercredi</item>
+        <item>Chaque jeudi</item>
+        <item>Chaque vendredi</item>
+        <item>Chaque samedi</item>
+        <item>Chaque dimanche</item>
+    </string-array>
+    <string-array name="weekday_short">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mer</item>
+        <item>Jeu</item>
+        <item>Ven</item>
+        <item>Sam</item>
+        <item>Dim</item>
+    </string-array>
+    <string name="list_separator">", "</string>
+
+    <string name="new_alarm">Nouveau réveil</string>
+    <string name="edit_alarm">Modifier</string>
+    <string name="save">Enregistrer</string>
+    <string name="delete">Supprimer</string>
+    <string name="cancel">Annuler</string>
+    <string name="delete_confirm">Cette action est irréversible. Supprimer ce réveil ?</string>
+    <string name="repeat_label">Répétition</string>
+    <string name="exercise_label">Tâche</string>
+    <string name="reps_label">Répétitions</string>
+    <string name="ai_counting">Compté par IA</string>
+    <string name="reps_preview">20 jumping jacks</string>
+    <string name="reps_preview_value">20 rép.</string>
+    <string name="word_count_preview_value">10 mots</string>
+    <string name="word_task_name">Vocabulaire</string>
+    <string name="word_task_tag">Épeler</string>
+    <string name="word_mode_choice">Choix</string>
+    <string name="word_mode_spell">Épeler</string>
+    <string name="word_mode_label">Mode vocabulaire</string>
+    <string name="word_count_label">Mots ciblés</string>
+    <string name="word_count_fmt">%1$d mots</string>
+    <string name="word_count_value_fmt">%1$d mots</string>
+    <string name="word_book_label">Lexique</string>
+    <string name="word_book_global_fmt">%1$s · Global</string>
+    <string name="word_book_dialog_title">Choisir le lexique (global)</string>
+    <string name="word_book_cet4">CET-4</string>
+    <string name="word_book_cet6">CET-6</string>
+
+    <string name="ringtone_label">Sonnerie</string>
+    <string name="ringtone_default">Par défaut</string>
+    <string name="ringtone_dialog_title">Sonnerie</string>
+    <string name="word_list_unavailable">Impossible de charger le lexique. Cette tâche est indisponible.</string>
+    <string name="word_summary_fmt">%1$d mots · %2$s</string>
+    <string name="jump_summary_fmt">%1$d jumping jacks</string>
+    <string name="reps_unit">rép.</string>
+    <string name="reps_value_fmt">%1$d rép.</string>
+    <string name="once">Une fois</string>
+    <string name="every_day">Tous les jours</string>
+    <string name="workdays">Jours ouvrés</string>
+    <string name="weekend">Week-end</string>
+    <string name="coming_soon">Bientôt</string>
+    <string name="exercise_jumping_jack">Jumping jacks</string>
+    <string name="exercise_squat">Squats</string>
+    <string name="exercise_pushup">Pompes</string>
+
+    <string name="ringing_title">Il est l’heure</string>
+    <string name="ringing_reps_fmt">Faites %1$d jumping jacks pour arrêter le réveil</string>
+    <string name="ringing_words_fmt">Répondez à %1$d questions pour arrêter le réveil</string>
+    <string name="ringing_start">Commencer</string>
+    <string name="ringing_hint">Activez la caméra, l’IA compte vos répétitions</string>
+    <string name="ringing_word_hint">Lisez le chinois et épellez le mot anglais</string>
+    <string name="ringing_choice_hint">Lisez le chinois et choisissez le mot anglais</string>
+    <string name="ringing_back_hint">Terminez l’exercice pour arrêter le réveil</string>
+    <string name="ringing_word_back_hint">Terminez les mots pour arrêter le réveil</string>
+    <string name="ringing_volume_locked">Volume du réveil verrouillé au maximum</string>
+    <string name="ringing_vibration_boost">Mode silencieux / Ne pas déranger détecté — vibration renforcée</string>
+    <string name="ringing_timeout">30 minutes écoulées. Le réveil s’est arrêté automatiquement.</string>
+
+    <string name="word_page_fmt">Mot %1$d / %2$d</string>
+    <string name="word_input_hint">Saisissez le mot anglais</string>
+    <string name="word_submit">Valider</string>
+    <string name="word_hint_default">Lisez le chinois et épellez le mot anglais</string>
+    <string name="word_choice_hint">Choisissez le mot anglais</string>
+    <string name="word_play">Écouter la prononciation</string>
+    <string name="word_tts_missing_title">Voix anglaise manquante</string>
+    <string name="word_tts_missing_desc">Aucune voix anglaise américaine n’est disponible pour la synthèse vocale. Installez un paquet hors ligne pour entendre la prononciation. Vous pouvez continuer à répondre.</string>
+    <string name="word_tts_settings">Installer la voix</string>
+    <string name="word_tts_later">Répondre</string>
+    <string name="word_review_wrong">Raté</string>
+    <string name="word_hint_first_fmt">Indice : commence par %1$s</string>
+    <string name="word_hint_length_fmt">Indice : commence par %1$s · %2$d lettres</string>
+    <string name="word_answer_fmt">Réponse : %1$s — on passe au suivant</string>
+    <string name="word_good">bien !</string>
+    <string name="word_review_title">Terminé !</string>
+    <string name="word_review_sub_fmt">%1$d mots révisés</string>
+    <string name="word_review_done">Terminer</string>
+
+    <string name="exercise_title">Défi jumping jacks</string>
+    <string name="exercise_prepare">Prêt</string>
+    <string name="exercise_hint_stand">Reculez pour que tout votre corps soit dans le cadre</string>
+    <string name="exercise_hint_open">Sautez et levez les deux bras au-dessus de la tête</string>
+    <string name="exercise_hint_closed">Bien ! Pieds joints, bras baissés</string>
+    <string name="exercise_hint_too_close">Trop près — reculez d’un pas</string>
+    <string name="exercise_hint_no_person">Personne détectée — placez-vous face à la caméra</string>
+    <string name="exercise_hint_feet">Reculez pour que vos pieds soient dans le cadre</string>
+    <string name="exercise_hint_arms">Gardez les deux mains dans le cadre</string>
+    <string name="exercise_switch_camera">Changer de caméra</string>
+    <string name="exercise_success">Terminé !</string>
+    <string name="exercise_success_sub">Réveil arrêté. Bonjour.</string>
+    <string name="exercise_perm_title">Autorisation caméra requise</string>
+    <string name="exercise_perm_desc">L’IA a besoin de la caméra pour confirmer votre exercice. Sans cela, le réveil ne s’arrêtera qu’après le délai de sécurité de 30 minutes.</string>
+    <string name="exercise_perm_grant">Autoriser la caméra</string>
+
+    <string name="notif_channel_alarm">Sonnerie du réveil</string>
+    <string name="notif_channel_alarm_desc">Alerte plein écran à l’heure du réveil</string>
+    <string name="notif_ringing_text">Terminez vos jumping jacks pour l’arrêter</string>
+
+    <string name="toast_perm_notification">Notifications désactivées — les alertes plein écran peuvent ne pas apparaître</string>
+    <string name="toast_alarm_saved">Réveil enregistré</string>
+    <string name="toast_alarm_deleted">Réveil supprimé</string>
+    <string name="toast_exact_denied">Autorisez « Alarmes et rappels » dans les réglages système</string>
+
+    <string name="fsi_title">Activer les alertes plein écran</string>
+    <string name="fsi_desc">Depuis Android 14, les alertes plein écran ne sont accordées par défaut qu’aux appels et aux alarmes. Autorisez les notifications plein écran pour « Réveil Jump » afin que l’écran d’exercice s’ouvre directement depuis l’écran verrouillé ; sinon, seule une bannière s’affichera.</string>
+    <string name="fsi_open">Ouvrir les réglages</string>
+    <string name="fsi_later">Plus tard</string>
+
+    <string name="debug_menu">Outils de débogage</string>
+    <string name="debug_test_10s">Tester le réveil dans 10 s</string>
+    <string name="debug_word_test">Test vocabulaire dans 10 s (3 mots)</string>
+    <string name="debug_video">Valider la détection avec la vidéo test</string>
+    <string name="debug_testing_scheduled">Réveil dans 10 secondes</string>
+    <string name="video_title">Validation de la détection</string>
+    <string name="video_loading">Décodage de la vidéo…</string>
+    <string name="video_stats_fmt">Image %1$d / %2$d · Compteur %3$d · Bras %4$.2f · Jambes %5$.2f · %6$s</string>
+    <string name="video_finished_fmt">Détection terminée · %1$d jumping jacks</string>
+    <string name="video_failed_fmt">Échec : %1$s</string>
+    <string name="debug_complete">DEBUG : terminer</string>
+</resources>

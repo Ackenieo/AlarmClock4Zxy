@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -54,7 +53,7 @@ import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions;
  * 这一页没有退出按钮，也没有长按强关：做够次数是唯一出口，
  * 只剩 {@link AlarmService} 的 30 分钟兜底会自动收掉本页。
  */
-public class ExerciseActivity extends AppCompatActivity {
+public class ExerciseActivity extends BaseActivity {
 
     private static final String TAG = "ExerciseActivity";
 
@@ -147,7 +146,7 @@ public class ExerciseActivity extends AppCompatActivity {
         // release 包里 BuildConfig.DEBUG 为 false，这个入口不存在。
         ring.setOnLongClickListener(v -> {
             if (!BuildConfig.DEBUG) return false;
-            Toast.makeText(this, "DEBUG: 直接完成", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.debug_complete, Toast.LENGTH_SHORT).show();
             finishSuccess();
             return true;
         });

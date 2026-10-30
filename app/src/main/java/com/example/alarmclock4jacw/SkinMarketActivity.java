@@ -14,7 +14,6 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 /**
@@ -23,7 +22,7 @@ import androidx.core.content.ContextCompat;
  * 换装只写一条 SharedPreferences，再由各 Activity 的 SkinStore.applyTheme() 叠加主题覆盖层；
  * 特效 UI 的开关同理，存在 {@link FxStore}，各页面 onResume 时读一次。
  */
-public class SkinMarketActivity extends AppCompatActivity {
+public class SkinMarketActivity extends BaseActivity {
 
     /** 特效 UI 清单：显式绑 id，不再靠下标去和开关数组对齐 */
     private static final FxEntry[] FX_UI = {
@@ -126,7 +125,7 @@ public class SkinMarketActivity extends AppCompatActivity {
         grid.removeAllViews();
         Skin current = store.current();
 
-        currentLabel.setText(getString(R.string.skin_current_fmt, current.name));
+        currentLabel.setText(getString(R.string.skin_current_fmt, current.name(this)));
 
         for (Skin skin : store.presets()) {
             View item = getLayoutInflater().inflate(R.layout.item_skin, grid, false);
@@ -209,7 +208,7 @@ public class SkinMarketActivity extends AppCompatActivity {
         item.findViewById(R.id.skin_dot).setBackground(circle(skin.accent));
         item.findViewById(R.id.skin_dot_small).setBackground(circle(skin.deep));
 
-        ((TextView) item.findViewById(R.id.skin_name)).setText(skin.name);
+        ((TextView) item.findViewById(R.id.skin_name)).setText(skin.name(this));
 
         TextView status = item.findViewById(R.id.skin_status);
         if (active) {
@@ -394,7 +393,7 @@ public class SkinMarketActivity extends AppCompatActivity {
             return;
         }
         store.select(skin);
-        Toast.makeText(this, getString(R.string.skin_applied_fmt, skin.name),
+        Toast.makeText(this, getString(R.string.skin_applied_fmt, skin.name(this)),
                 Toast.LENGTH_SHORT).show();
         recreate();     // 本页也立刻换色
     }
