@@ -146,6 +146,54 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- 备注：和重复/铃声卡片等宽；单行时同高，2~4 行时只变高、宽度不变。
+                 右侧就是输入区，点整行即可编辑，所以不放箭头。 -->
+            <LinearLayout
+                android:id="@+id/note_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_card_glass"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="64dp"
+                android:orientation="horizontal"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/note_label"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/note_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:gravity="end|center_vertical"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:lineSpacingExtra="2dp"
+                    android:maxLines="4"
+                    android:minLines="1"
+                    android:overScrollMode="never"
+                    android:padding="0dp"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
             <!-- 选取铃声：一行入口，点击进入铃声选择页（类 Apple「铃声」行） -->
             <LinearLayout
                 android:layout_width="match_parent"

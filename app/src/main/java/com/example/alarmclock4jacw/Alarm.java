@@ -18,6 +18,11 @@ public class Alarm {
     public static final String TASK_WORD_CHOICE = "WORD_CHOICE";
     public static final String TASK_WORD_SPELL = "WORD_SPELL";
 
+    /** 备注最多 50 个字符（50 个汉字），换行符不计入；编辑页/响铃页最多显示 4 行 */
+    public static final int MAX_NOTE_LENGTH = 50;
+    /** 备注最多保留 4 行非空文本 */
+    public static final int MAX_NOTE_LINES = 4;
+
     public long id;
     public int hour;
     public int minute;
@@ -30,6 +35,8 @@ public class Alarm {
     public String wordBookId;
     /** 选中铃声的 Uri 字符串；为空表示用 App 内置默认提示音（R.raw.alarm_beep）。 */
     public String ringtone;
+    /** 可选备注，最多 4 行；null / 空串表示没有备注。 */
+    public String note;
 
     public Alarm() {
         this.id = System.currentTimeMillis();
@@ -52,6 +59,59 @@ public class Alarm {
         String book = wordBookId;
         if (book == null || book.trim().isEmpty()) book = WordStore.getBook(ctx);
         return WordStore.normalizeBook(book);
+    }
+
+    public boolean hasNote() {
+        return note != null && !note.isEmpty();
+    }
+
+    /** 备注的字符数：换行符不计入。 */
+    public static int noteCharCount(CharSequence text) {
+        if (text == null) return 0;
+        int count = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c != '\n' && c != '\r') count++;
+        }
+        return count;
+    }
+
+    /**
+     * 归一化备注：去掉首尾空白、统一换行、最多保留 4 行非空文本、
+     * 最多 50 个字符（换行符不计入）。返回 null 表示没有备注。
+     */
+    public static String normalizeNote(String raw) {
+        if (raw == null) return null;
+
+        String text = raw.replace("\r\n", "\n").replace('\r', '\n');
+        StringBuilder sb = new StringBuilder();
+        int kept = 0;
+        for (String line : text.split("\n", -1)) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty()) continue;
+            if (kept >= MAX_NOTE_LINES) break;
+            if (sb.length() > 0) sb.append('\n');
+            sb.append(trimmed);
+            kept++;
+        }
+
+        String out = sb.toString();
+        if (noteCharCount(out) > MAX_NOTE_LENGTH) {
+            int count = 0;
+            int end = 0;
+            while (end < out.length() && count < MAX_NOTE_LENGTH) {
+                if (out.charAt(end) != '\n') count++;
+                end++;
+            }
+            // 不要把 emoji 等代理对截成半个字符
+            if (end > 0 && end < out.length()
+                    && Character.isHighSurrogate(out.charAt(end - 1))
+                    && Character.isLowSurrogate(out.charAt(end))) {
+                end--;
+            }
+            out = out.substring(0, end).trim();
+        }
+        return out.isEmpty() ? null : out;
     }
 
     /** 闹钟列表里的摘要：20 个开合跳 / 10 个单词 · 四级 */
@@ -135,6 +195,7 @@ public class Alarm {
             o.put("task", taskType);
             if (wordBookId != null && !wordBookId.isEmpty()) o.put("wordBook", wordBookId);
             if (ringtone != null && !ringtone.isEmpty()) o.put("ringtone", ringtone);
+            if (note != null && !note.isEmpty()) o.put("note", note);
         } catch (JSONException ignored) {
         }
         return o;
@@ -156,6 +217,7 @@ public class Alarm {
         a.wordBookId = book.isEmpty() ? null : book;
         String tone = o.optString("ringtone", "");
         a.ringtone = tone.isEmpty() ? null : tone;
+        a.note = normalizeNote(o.optString("note", ""));
         return a;
     }
 

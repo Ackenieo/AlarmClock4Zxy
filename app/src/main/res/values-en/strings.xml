@@ -135,6 +135,7 @@
     <string name="word_book_cet4">CET-4</string>
     <string name="word_book_cet6">CET-6</string>
 
+    <string name="note_label">Note</string>
     <string name="ringtone_label">Ringtone</string>
     <string name="ringtone_default">Default</string>
     <string name="ringtone_dialog_title">Ringtone</string>

@@ -66,6 +66,7 @@ public class AlarmService extends Service {
     private static final String KEY_WORD_BOOK = "word_book";
     private static final String KEY_WORD_SESSION = "word_session";
     private static final String KEY_RINGTONE = "ringtone";
+    private static final String KEY_NOTE = "note";
 
     /** 硬兜底：连续响满 30 分钟自动停止 */
     private static final long MAX_RING_MILLIS = 30 * 60 * 1000L;
@@ -83,6 +84,7 @@ public class AlarmService extends Service {
     public static final String EXTRA_WORD_BOOK = "word_book";
     public static final String EXTRA_WORD_SESSION = "word_session";
     public static final String EXTRA_RINGTONE = "ringtone";
+    public static final String EXTRA_NOTE = "note";
 
     /** 供界面判断当前是否正在响铃 */
     public static volatile boolean ringing = false;
@@ -111,6 +113,7 @@ public class AlarmService extends Service {
     private long alarmId = -1L;
     private int reps = 20;
     private String label = "";
+    private String note = "";
     private String taskType = Alarm.TASK_JUMPING_JACK;
     private int targetWords = 10;
     private int wordStart = 0;
@@ -127,6 +130,7 @@ public class AlarmService extends Service {
         i.putExtra(EXTRA_ID, alarm.id);
         i.putExtra(EXTRA_REPS, alarm.targetReps);
         i.putExtra(EXTRA_LABEL, alarm.timeText());
+        i.putExtra(EXTRA_NOTE, alarm.note == null ? "" : alarm.note);
         i.putExtra(EXTRA_TASK, alarm.taskType);
         i.putExtra(EXTRA_WORDS, alarm.targetWords);
         if (alarm.isWordTask()) {
@@ -174,6 +178,8 @@ public class AlarmService extends Service {
             reps = intent.getIntExtra(EXTRA_REPS, 20);
             label = intent.getStringExtra(EXTRA_LABEL);
             if (label == null) label = "";
+            note = intent.getStringExtra(EXTRA_NOTE);
+            if (note == null) note = "";
             taskType = intent.getStringExtra(EXTRA_TASK);
             if (!Alarm.isWordTask(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
             targetWords = intent.getIntExtra(EXTRA_WORDS, 10);
@@ -402,6 +408,7 @@ public class AlarmService extends Service {
                 .putExtra(EXTRA_ID, alarmId)
                 .putExtra(EXTRA_REPS, reps)
                 .putExtra(EXTRA_LABEL, label)
+                .putExtra(EXTRA_NOTE, note)
                 .putExtra(EXTRA_TASK, taskType)
                 .putExtra(EXTRA_WORDS, targetWords)
                 .putExtra(EXTRA_WORD_START, wordStart)
@@ -427,6 +434,7 @@ public class AlarmService extends Service {
                 .putExtra(EXTRA_ID, alarmId)
                 .putExtra(EXTRA_REPS, reps)
                 .putExtra(EXTRA_LABEL, label)
+                .putExtra(EXTRA_NOTE, note)
                 .putExtra(EXTRA_TASK, taskType)
                 .putExtra(EXTRA_WORDS, targetWords)
                 .putExtra(EXTRA_WORD_START, wordStart)
@@ -436,15 +444,18 @@ public class AlarmService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         String title = getString(R.string.ringing_title) + (label.isEmpty() ? "" : " · " + label);
-        String text = Alarm.isWordTask(taskType)
+        String taskText = Alarm.isWordTask(taskType)
                 ? getString(R.string.ringing_words_fmt, targetWords)
                 : getString(R.string.ringing_reps_fmt, reps);
+        // 折叠态优先显示备注，展开后同时看到备注和任务目标
+        String text = note.isEmpty() ? taskText : note;
+        String bigText = note.isEmpty() ? taskText : note + "\n" + taskText;
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_alarm)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -485,6 +496,7 @@ public class AlarmService extends Service {
                 .putString(KEY_WORD_BOOK, wordBook)
                 .putString(KEY_WORD_SESSION, wordSessionId)
                 .putString(KEY_RINGTONE, ringtoneUri)
+                .putString(KEY_NOTE, note)
                 .apply();
     }
 
@@ -500,6 +512,8 @@ public class AlarmService extends Service {
         reps = p.getInt(KEY_REPS, 20);
         label = p.getString(KEY_LABEL, "");
         if (label == null) label = "";
+        note = p.getString(KEY_NOTE, "");
+        if (note == null) note = "";
         taskType = p.getString(KEY_TASK, Alarm.TASK_JUMPING_JACK);
         if (!Alarm.isWordTask(taskType)) taskType = Alarm.TASK_JUMPING_JACK;
         targetWords = p.getInt(KEY_WORDS, 10);
