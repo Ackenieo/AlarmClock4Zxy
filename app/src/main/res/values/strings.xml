@@ -133,6 +133,10 @@
     <string name="word_book_dialog_title">选择词库（全局设置）</string>
     <string name="word_book_cet4">四级</string>
     <string name="word_book_cet6">六级</string>
+
+    <string name="ringtone_label">选取铃声</string>
+    <string name="ringtone_default">默认</string>
+    <string name="ringtone_dialog_title">铃声</string>
     <string name="word_list_unavailable">词库加载失败，暂时无法选择该任务</string>
     <string name="word_summary_fmt">%1$d 个单词 · %2$s</string>
     <string name="jump_summary_fmt">%1$d 个开合跳</string>

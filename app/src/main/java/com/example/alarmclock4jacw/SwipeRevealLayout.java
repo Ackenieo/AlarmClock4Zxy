@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,8 +12,14 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 
 /**
- * 左滑露出删除按钮的列表行。
- * 内容层始终铺满整行，删除按钮藏在右侧下方，向左滑动时内容层整体左移把它露出来。
+ * 类 Apple 闹钟的左滑删除行，分两段防误删：
+ *
+ * <p><b>第一段（从收起状态左滑）</b>：不管手指划多远，行最多只滑到 92dp 的“露出
+ * 删除图标”状态（图一），绝不会在这一段删除；松手后吸附到露出状态。</p>
+ *
+ * <p><b>第二段（已经在露出状态再左滑）</b>：此时继续左滑，浅色背景条上的红色圆形
+ * 删除按钮会随手指向左探出更多，滑过删除阈值后松手才真正删除；没滑够则弹回露出
+ * 状态。也可以直接点删除按钮删除。这样顺手一划只会露出按钮，不会误删。</p>
  */
 public class SwipeRevealLayout extends ViewGroup {
 
@@ -22,16 +27,21 @@ public class SwipeRevealLayout extends ViewGroup {
     private static SwipeRevealLayout openRow;
 
     private View content;
-    private View action;
+    private DeletePillView action;
     private View divider;
 
-    private int actionWidth;
+    private final int touchSlop;
+    private final int revealWidth;
+    private int deleteThreshold;
+
     private float offset;
     private float downX;
     private float downY;
     private float lastX;
     private boolean dragging;
-    private final int touchSlop;
+    /** 本次手势开始时行是否已经处在“露出删除按钮”的状态。 */
+    private boolean fromOpen;
+    private boolean deleting;
     private ValueAnimator animator;
 
     private Runnable deleteListener;
@@ -48,6 +58,7 @@ public class SwipeRevealLayout extends ViewGroup {
     public SwipeRevealLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        revealWidth = dp(92);
     }
 
     @Override
@@ -59,9 +70,7 @@ public class SwipeRevealLayout extends ViewGroup {
 
         if (action != null) {
             action.setOnClickListener(v -> {
-                if (deleteListener != null) {
-                    deleteListener.run();
-                }
+                if (!deleting) commitDelete();
             });
         }
         if (content != null) {
@@ -89,19 +98,15 @@ public class SwipeRevealLayout extends ViewGroup {
     /**
      * 只给内容层调透明度。
      * 禁用状态的闹钟整行变灰，但删除按钮是操作入口 —— 跟着一起灰掉会看着像坏了，
-     * 所以灰只压内容层，红面板保持原色。
+     * 所以灰只压内容层，淡白背景条与红色删除标记保持原色。
      */
     public void setContentAlpha(float alpha) {
-        if (content != null) {
-            content.setAlpha(alpha);
-        }
+        if (content != null) content.setAlpha(alpha);
     }
 
     /** 收起当前展开的行（列表一开始滚动就调用）。 */
     public static void closeOpenRow() {
-        if (openRow != null) {
-            openRow.animateTo(0);
-        }
+        if (openRow != null) openRow.animateTo(0);
     }
 
     @Override
@@ -117,8 +122,8 @@ public class SwipeRevealLayout extends ViewGroup {
         }
 
         if (action != null) {
-            measureChild(action,
-                    getChildMeasureSpec(widthMeasureSpec, 0, action.getLayoutParams().width),
+            action.measure(
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
         }
         if (divider != null) {
@@ -133,59 +138,31 @@ public class SwipeRevealLayout extends ViewGroup {
         int width = getWidth();
         int height = getHeight();
 
-        if (content != null) {
-            content.layout(0, 0, width, height);
-        }
-        if (action != null) {
-            actionWidth = action.getMeasuredWidth();
-            action.layout(width - actionWidth, 0, width, height);
-        }
+        if (content != null) content.layout(0, 0, width, height);
+        if (action != null) action.layout(0, 0, width, height);
         if (divider != null) {
             int dh = divider.getMeasuredHeight();
             divider.layout(0, height - dh, width, height);
         }
+
+        deleteThreshold = Math.max(revealWidth + dp(72), Math.round(width * 0.58f));
         applyOffset();
     }
 
     private void applyOffset() {
-        if (content != null) {
-            content.setTranslationX(-offset);
-        }
-        clipAction();
-    }
-
-    /**
-     * 删除层必须跟着滑出的宽度裁掉。
-     *
-     * 列表行是半透明玻璃，删除层要是整块留着，就会从玻璃底下透上来 ——
-     * 表现是没滑动的行右侧一直泛红，开关看着像被染了色。
-     * 用 setClipBounds 只保留已经露出来的那一段，剩下的不参与绘制。
-     */
-    private void clipAction() {
-        if (action == null) return;
-        int w = actionWidth;
-        int h = action.getHeight();
-        if (w <= 0 || h <= 0) return;
-
-        int shown = Math.round(Math.min(offset, w));
-        if (shown <= 0) {
-            action.setVisibility(INVISIBLE);
-            return;
-        }
-        action.setVisibility(VISIBLE);
-        action.setClipBounds(new Rect(w - shown, 0, w, h));
+        if (content != null) content.setTranslationX(-offset);
+        if (action != null) action.setRevealed(offset);
     }
 
     private void setOffset(float value) {
-        float max = actionWidth > 0 ? actionWidth : 0;
-        offset = Math.max(0f, Math.min(max, value));
+        offset = Math.max(0f, Math.min(getWidth(), value));
         applyOffset();
     }
 
+    /** 打开到“露出图标”的宽度，或者回 0。 */
     private void animateTo(float target) {
-        if (animator != null) {
-            animator.cancel();
-        }
+        if (deleting) return;
+        if (animator != null) animator.cancel();
         if (target > 0 && openRow != null && openRow != this) {
             openRow.animateTo(0);
         }
@@ -207,16 +184,28 @@ public class SwipeRevealLayout extends ViewGroup {
         animator.start();
     }
 
+    /**
+     * 滑过阈值后按当前滑出的宽度直接删除。
+     * 不再补一段“铺满整行”的动画：红色区域应当停在手指松开时的长度。
+     */
+    private void commitDelete() {
+        if (deleting || deleteListener == null) return;
+        deleting = true;
+        if (animator != null) animator.cancel();
+        if (openRow == this) openRow = null;
+        deleteListener.run();
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (deleting) return false;
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 downX = lastX = ev.getX();
                 downY = ev.getY();
                 dragging = false;
-                if (animator != null) {
-                    animator.cancel();
-                }
+                fromOpen = offset > revealWidth * 0.5f;
+                if (animator != null) animator.cancel();
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dx = ev.getX() - downX;
@@ -238,16 +227,24 @@ public class SwipeRevealLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        if (deleting) return true;
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 downX = lastX = ev.getX();
                 downY = ev.getY();
                 dragging = false;
+                fromOpen = offset > revealWidth * 0.5f;
                 return true;
             case MotionEvent.ACTION_MOVE:
                 float dx = ev.getX() - lastX;
                 lastX = ev.getX();
-                setOffset(offset - dx);
+                float target = offset - dx;
+                // 第一段（从收起状态左滑）：最多只能划到露出图标，划再多也越不过去，
+                // 这样顺手一划只会露出删除按钮，不会误删。已露出状态才允许继续左滑删除。
+                if (!fromOpen) {
+                    target = Math.min(target, revealWidth);
+                }
+                setOffset(target);
                 return true;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -255,7 +252,13 @@ public class SwipeRevealLayout extends ViewGroup {
                     getParent().requestDisallowInterceptTouchEvent(false);
                 }
                 if (dragging) {
-                    animateTo(offset > actionWidth / 2f ? actionWidth : 0);
+                    if (offset >= deleteThreshold) {
+                        commitDelete();
+                    } else if (offset > revealWidth / 2f) {
+                        animateTo(revealWidth);
+                    } else {
+                        animateTo(0);
+                    }
                 }
                 dragging = false;
                 return true;
@@ -268,10 +271,14 @@ public class SwipeRevealLayout extends ViewGroup {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (animator != null) {
+            // cancel() 也会回调 onAnimationEnd；行已经离开窗口时不能再触发删除
+            animator.removeAllListeners();
             animator.cancel();
         }
-        if (openRow == this) {
-            openRow = null;
-        }
+        if (openRow == this) openRow = null;
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 }

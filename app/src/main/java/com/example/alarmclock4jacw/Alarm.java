@@ -28,6 +28,8 @@ public class Alarm {
     public String taskType = TASK_JUMPING_JACK;
     /** 预留商城词库 ID；为空时使用全局词库设置 */
     public String wordBookId;
+    /** 选中铃声的 Uri 字符串；为空表示用 App 内置默认提示音（R.raw.alarm_beep）。 */
+    public String ringtone;
 
     public Alarm() {
         this.id = System.currentTimeMillis();
@@ -132,6 +134,7 @@ public class Alarm {
             o.put("words", targetWords);
             o.put("task", taskType);
             if (wordBookId != null && !wordBookId.isEmpty()) o.put("wordBook", wordBookId);
+            if (ringtone != null && !ringtone.isEmpty()) o.put("ringtone", ringtone);
         } catch (JSONException ignored) {
         }
         return o;
@@ -151,6 +154,8 @@ public class Alarm {
         a.taskType = isWordTask(task) ? task : TASK_JUMPING_JACK;
         String book = o.optString("wordBook", "");
         a.wordBookId = book.isEmpty() ? null : book;
+        String tone = o.optString("ringtone", "");
+        a.ringtone = tone.isEmpty() ? null : tone;
         return a;
     }
 

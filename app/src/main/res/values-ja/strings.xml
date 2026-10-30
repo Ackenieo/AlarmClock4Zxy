@@ -133,6 +133,10 @@
     <string name="word_book_dialog_title">単語帳を選択（全体設定）</string>
     <string name="word_book_cet4">CET-4</string>
     <string name="word_book_cet6">CET-6</string>
+
+    <string name="ringtone_label">着信音</string>
+    <string name="ringtone_default">デフォルト</string>
+    <string name="ringtone_dialog_title">着信音</string>
     <string name="word_list_unavailable">単語帳を読み込めません。このタスクは選択できません。</string>
     <string name="word_summary_fmt">%1$d語 · %2$s</string>
     <string name="jump_summary_fmt">ジャンピングジャック%1$d回</string>

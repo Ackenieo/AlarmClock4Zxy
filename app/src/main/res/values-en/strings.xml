@@ -134,6 +134,10 @@
     <string name="word_book_dialog_title">Choose word list (global)</string>
     <string name="word_book_cet4">CET-4</string>
     <string name="word_book_cet6">CET-6</string>
+
+    <string name="ringtone_label">Ringtone</string>
+    <string name="ringtone_default">Default</string>
+    <string name="ringtone_dialog_title">Ringtone</string>
     <string name="word_list_unavailable">Word list failed to load. This task is unavailable.</string>
     <string name="word_summary_fmt">%1$d words · %2$s</string>
     <string name="jump_summary_fmt">%1$d jumping jacks</string>

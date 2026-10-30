@@ -4,26 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- 藏在内容层下面的删除按钮，左滑后露出 -->
-    <FrameLayout
+    <!-- 藏在内容层下面的删除条：红色药丸会随滑动距离变长 -->
+    <com.example.alarmclock4jacw.DeletePillView
         android:id="@+id/delete_action"
-        android:layout_width="92dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="end"
         android:clickable="true"
         android:contentDescription="@string/delete"
-        android:focusable="true">
-
-        <ImageView
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_delete_circle"
-            android:contentDescription="@string/delete"
-            android:padding="14dp"
-            android:src="@drawable/ic_delete"
-            android:tint="@color/white" />
-    </FrameLayout>
+        android:focusable="true" />
 
     <LinearLayout
         android:id="@+id/row_content"
