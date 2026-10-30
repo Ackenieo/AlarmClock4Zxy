@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -62,6 +63,8 @@ public class AlarmEditActivity extends BaseActivity {
     private TextView ringtoneValue;
     private EditText noteInput;
     private View noteRow;
+    /** 上一次“已达最大字符数”提示的时间，避免连续输入时 Toast 刷屏 */
+    private long lastNoteLimitToastAt;
     /** 当前选中的铃声 Uri；null 表示用 App 内置默认提示音。 */
     private Uri selectedRingtone;
     /** 试听用的临时播放器，随弹窗关闭释放。 */
@@ -258,7 +261,7 @@ public class AlarmEditActivity extends BaseActivity {
      * 备注输入过滤器：最多 50 个非换行字符、最多 4 行。
      * 换行符不占字符额度，但仍然受行数上限约束。
      */
-    private static class NoteInputFilter implements InputFilter {
+    private class NoteInputFilter implements InputFilter {
         @Override
         public CharSequence filter(CharSequence source, int start, int end,
                                    Spanned dest, int dstart, int dend) {
@@ -269,6 +272,7 @@ public class AlarmEditActivity extends BaseActivity {
             int roomNewlines = Alarm.MAX_NOTE_LINES - 1 - newlines;
 
             StringBuilder accepted = new StringBuilder();
+            boolean charLimitHit = false;
             int i = start;
             while (i < end) {
                 char c = source.charAt(i);
@@ -277,7 +281,10 @@ public class AlarmEditActivity extends BaseActivity {
                     roomNewlines--;
                     accepted.append(c);
                 } else {
-                    if (roomChars <= 0) break;
+                    if (roomChars <= 0) {
+                        charLimitHit = true;
+                        break;
+                    }
                     roomChars--;
                     accepted.append(c);
                 }
@@ -291,11 +298,12 @@ public class AlarmEditActivity extends BaseActivity {
                 accepted.deleteCharAt(accepted.length() - 1);
             }
 
+            if (charLimitHit) showNoteLimitToast();
             if (accepted.length() == end - start) return null;
             return accepted.toString();
         }
 
-        private static int countChars(CharSequence text, int start, int end) {
+        private int countChars(CharSequence text, int start, int end) {
             int count = 0;
             for (int i = start; i < end; i++) {
                 char c = text.charAt(i);
@@ -304,7 +312,7 @@ public class AlarmEditActivity extends BaseActivity {
             return count;
         }
 
-        private static int countNewlines(CharSequence text, int start, int end) {
+        private int countNewlines(CharSequence text, int start, int end) {
             int count = 0;
             for (int i = start; i < end; i++) {
                 char c = text.charAt(i);
@@ -312,6 +320,14 @@ public class AlarmEditActivity extends BaseActivity {
             }
             return count;
         }
+    }
+
+    /** 备注字符数触顶时的短暂提示；2 秒内不重复弹。 */
+    private void showNoteLimitToast() {
+        long now = SystemClock.elapsedRealtime();
+        if (now - lastNoteLimitToastAt < 2000L) return;
+        lastNoteLimitToastAt = now;
+        Toast.makeText(this, R.string.note_limit_reached, Toast.LENGTH_SHORT).show();
     }
 
     /** 全屏的星期选择页：点一行切换选中，返回即生效 */
@@ -401,8 +417,10 @@ public class AlarmEditActivity extends BaseActivity {
             return;
         }
         Ringtone r = RingtoneManager.getRingtone(this, selectedRingtone);
-        String name = r != null ? r.getTitle(this) : getString(R.string.ringtone_default);
-        ringtoneValue.setText(name);
+        String raw = r != null ? r.getTitle(this) : null;
+        ringtoneValue.setText(raw == null || raw.isEmpty()
+                ? getString(R.string.ringtone_default)
+                : RingtoneNames.localized(this, selectedRingtone, raw));
     }
 
     /** 类 Apple 的铃声选择页：单选 + 勾选 + 点击试听；返回即生效。 */
@@ -507,7 +525,7 @@ public class AlarmEditActivity extends BaseActivity {
                     title = r != null ? r.getTitle(this) : "";
                 }
                 if (title == null || title.isEmpty()) title = getString(R.string.ringtone_default);
-                out.add(new RingtoneOption(uri, title));
+                out.add(new RingtoneOption(uri, RingtoneNames.localized(this, uri, title)));
             }
             cursor.close();
         } catch (Exception ignored) {

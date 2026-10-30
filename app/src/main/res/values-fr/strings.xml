@@ -136,6 +136,7 @@
     <string name="word_book_cet6">CET-6</string>
 
     <string name="note_label">Remarque</string>
+    <string name="note_limit_reached">Limite de caractères atteinte</string>
     <string name="ringtone_label">Sonnerie</string>
     <string name="ringtone_default">Par défaut</string>
     <string name="ringtone_dialog_title">Sonnerie</string>

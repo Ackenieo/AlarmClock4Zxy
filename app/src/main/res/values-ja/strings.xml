@@ -135,6 +135,7 @@
     <string name="word_book_cet6">CET-6</string>
 
     <string name="note_label">メモ</string>
+    <string name="note_limit_reached">文字数の上限に達しました</string>
     <string name="ringtone_label">着信音</string>
     <string name="ringtone_default">デフォルト</string>
     <string name="ringtone_dialog_title">着信音</string>
