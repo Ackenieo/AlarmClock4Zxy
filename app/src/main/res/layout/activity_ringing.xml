@@ -40,6 +40,20 @@
             android:textColor="@color/text_secondary"
             android:textSize="15sp" />
 
+        <!-- 可选备注：没有备注时整块 GONE -->
+        <TextView
+            android:id="@+id/note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:maxLines="4"
+            android:textColor="@color/text_primary"
+            android:textSize="17sp"
+            android:visibility="gone" />
+
         <Space
             android:layout_width="1dp"
             android:layout_height="0dp"

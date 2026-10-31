@@ -39,6 +39,7 @@ public class RingingActivity extends BaseActivity {
     private GlitchTextView clock;
     private TextView repsText;
     private TextView hint;
+    private TextView noteView;
     private int reps = 20;
     private int targetWords = 10;
     private int wordStart = 0;
@@ -104,6 +105,7 @@ public class RingingActivity extends BaseActivity {
         clock = findViewById(R.id.clock);
         repsText = findViewById(R.id.reps_text);
         hint = findViewById(R.id.hint);
+        noteView = findViewById(R.id.note);
 
         // 特效 UI：霓虹呼吸 + 故障抖色，按皮肤市场里的开关决定开不开
         FxStore.applyFlowBg(this, findViewById(R.id.flow_bg));
@@ -189,6 +191,15 @@ public class RingingActivity extends BaseActivity {
         repsText.setText(Alarm.isWordTask(taskType)
                 ? getString(R.string.ringing_words_fmt, targetWords)
                 : getString(R.string.ringing_reps_fmt, reps));
+
+        String note = intent.getStringExtra(AlarmService.EXTRA_NOTE);
+        if (note == null || note.isEmpty()) {
+            noteView.setText("");
+            noteView.setVisibility(View.GONE);
+        } else {
+            noteView.setText(note);
+            noteView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

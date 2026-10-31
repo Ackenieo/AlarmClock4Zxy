@@ -9,12 +9,18 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -55,6 +61,10 @@ public class AlarmEditActivity extends BaseActivity {
     private boolean wordAvailable;
     private TextView repeatSummary;
     private TextView ringtoneValue;
+    private EditText noteInput;
+    private View noteRow;
+    /** 上一次“已达最大字符数”提示的时间，避免连续输入时 Toast 刷屏 */
+    private long lastNoteLimitToastAt;
     /** 当前选中的铃声 Uri；null 表示用 App 内置默认提示音。 */
     private Uri selectedRingtone;
     /** 试听用的临时播放器，随弹窗关闭释放。 */
@@ -102,6 +112,8 @@ public class AlarmEditActivity extends BaseActivity {
         repsValue = findViewById(R.id.reps_value);
         repeatSummary = findViewById(R.id.repeat_summary);
         ringtoneValue = findViewById(R.id.ringtone_value);
+        noteInput = findViewById(R.id.note_input);
+        noteRow = findViewById(R.id.note_row);
         repsSection = findViewById(R.id.reps_section);
         wordSection = findViewById(R.id.word_section);
         wordCountSlider = findViewById(R.id.word_count_slider);
@@ -114,6 +126,7 @@ public class AlarmEditActivity extends BaseActivity {
 
         setupPickers();
         setupRepeatRow();
+        setupNoteInput();
         setupRingtoneRow();
         setupSlider();
         setupTaskSelector();
@@ -191,6 +204,130 @@ public class AlarmEditActivity extends BaseActivity {
             return;
         }
         repeatSummary.setText(Alarm.repeatDays(this, repeatMask));
+    }
+
+    // -------------------------------------------------------------- 备注
+    private void setupNoteInput() {
+        noteInput.setFilters(new InputFilter[]{new NoteInputFilter()});
+        noteInput.setText(alarm.note == null ? "" : alarm.note);
+        // 平时像其他行的灰色值，编辑时切成主文字色
+        noteInput.setTextColor(getColor(R.color.text_secondary));
+        noteInput.setOnFocusChangeListener((v, hasFocus) ->
+                noteInput.setTextColor(getColor(hasFocus ? R.color.text_primary : R.color.text_secondary)));
+        // 进页面不自动弹键盘：默认不可聚焦，第一次点击备注卡片才进入编辑
+        noteRow.setOnClickListener(v -> {
+            if (!noteInput.hasFocus()) focusNoteEditor();
+        });
+        noteInput.setOnClickListener(v -> {
+            if (!noteInput.isFocusableInTouchMode()) focusNoteEditor();
+        });
+        // 输入框内部已经超过 4 行时，拖动只滚输入框；其余区域的拖动交给页面 ScrollView
+        noteInput.setOnTouchListener((v, event) -> {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (noteContentOverflows()) {
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+            return false;
+        });
+    }
+
+    /** 备注内容是否已经超过输入框 4 行的可视高度。 */
+    private boolean noteContentOverflows() {
+        if (noteInput.getLayout() == null) return false;
+        int visibleHeight = noteInput.getHeight()
+                - noteInput.getTotalPaddingTop()
+                - noteInput.getTotalPaddingBottom();
+        return noteInput.getLayout().getHeight() > visibleHeight;
+    }
+
+    private void focusNoteEditor() {
+        noteInput.setFocusable(true);
+        noteInput.setFocusableInTouchMode(true);
+        noteInput.requestFocus();
+        noteInput.setSelection(noteInput.getText().length());
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm != null) noteInput.post(() ->
+                imm.showSoftInput(noteInput, InputMethodManager.SHOW_IMPLICIT));
+    }
+
+    /**
+     * 备注输入过滤器：最多 50 个非换行字符、最多 4 行。
+     * 换行符不占字符额度，但仍然受行数上限约束。
+     */
+    private class NoteInputFilter implements InputFilter {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   Spanned dest, int dstart, int dend) {
+            int chars = countChars(dest, 0, dstart) + countChars(dest, dend, dest.length());
+            int newlines = countNewlines(dest, 0, dstart)
+                    + countNewlines(dest, dend, dest.length());
+            int roomChars = Alarm.MAX_NOTE_LENGTH - chars;
+            int roomNewlines = Alarm.MAX_NOTE_LINES - 1 - newlines;
+
+            StringBuilder accepted = new StringBuilder();
+            boolean charLimitHit = false;
+            int i = start;
+            while (i < end) {
+                char c = source.charAt(i);
+                if (c == '\n' || c == '\r') {
+                    if (roomNewlines <= 0) break;
+                    roomNewlines--;
+                    accepted.append(c);
+                } else {
+                    if (roomChars <= 0) {
+                        charLimitHit = true;
+                        break;
+                    }
+                    roomChars--;
+                    accepted.append(c);
+                }
+                i++;
+            }
+
+            // 不要把 emoji 等代理对截成半个字符
+            if (i < end && Character.isLowSurrogate(source.charAt(i))
+                    && accepted.length() > 0
+                    && Character.isHighSurrogate(accepted.charAt(accepted.length() - 1))) {
+                accepted.deleteCharAt(accepted.length() - 1);
+            }
+
+            if (charLimitHit) showNoteLimitToast();
+            if (accepted.length() == end - start) return null;
+            return accepted.toString();
+        }
+
+        private int countChars(CharSequence text, int start, int end) {
+            int count = 0;
+            for (int i = start; i < end; i++) {
+                char c = text.charAt(i);
+                if (c != '\n' && c != '\r') count++;
+            }
+            return count;
+        }
+
+        private int countNewlines(CharSequence text, int start, int end) {
+            int count = 0;
+            for (int i = start; i < end; i++) {
+                char c = text.charAt(i);
+                if (c == '\n' || c == '\r') count++;
+            }
+            return count;
+        }
+    }
+
+    /** 备注字符数触顶时的短暂提示；2 秒内不重复弹。 */
+    private void showNoteLimitToast() {
+        long now = SystemClock.elapsedRealtime();
+        if (now - lastNoteLimitToastAt < 2000L) return;
+        lastNoteLimitToastAt = now;
+        Toast.makeText(this, R.string.note_limit_reached, Toast.LENGTH_SHORT).show();
     }
 
     /** 全屏的星期选择页：点一行切换选中，返回即生效 */
@@ -280,8 +417,10 @@ public class AlarmEditActivity extends BaseActivity {
             return;
         }
         Ringtone r = RingtoneManager.getRingtone(this, selectedRingtone);
-        String name = r != null ? r.getTitle(this) : getString(R.string.ringtone_default);
-        ringtoneValue.setText(name);
+        String raw = r != null ? r.getTitle(this) : null;
+        ringtoneValue.setText(raw == null || raw.isEmpty()
+                ? getString(R.string.ringtone_default)
+                : RingtoneNames.localized(this, selectedRingtone, raw));
     }
 
     /** 类 Apple 的铃声选择页：单选 + 勾选 + 点击试听；返回即生效。 */
@@ -386,7 +525,7 @@ public class AlarmEditActivity extends BaseActivity {
                     title = r != null ? r.getTitle(this) : "";
                 }
                 if (title == null || title.isEmpty()) title = getString(R.string.ringtone_default);
-                out.add(new RingtoneOption(uri, title));
+                out.add(new RingtoneOption(uri, RingtoneNames.localized(this, uri, title)));
             }
             cursor.close();
         } catch (Exception ignored) {
@@ -566,6 +705,7 @@ public class AlarmEditActivity extends BaseActivity {
         alarm.minute = minutePicker.getValue();
         alarm.repeatMask = repeatMask;
         alarm.ringtone = selectedRingtone != null ? selectedRingtone.toString() : null;
+        alarm.note = Alarm.normalizeNote(noteInput.getText().toString());
         alarm.targetReps = (int) repsSlider.getValue();
         alarm.targetWords = (int) wordCountSlider.getValue();
         alarm.enabled = true;

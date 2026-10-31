@@ -233,11 +233,14 @@ public class MainActivity extends BaseActivity {
         TextView time = row.findViewById(R.id.time);
         TextView detail = row.findViewById(R.id.detail);
         TextView reps = row.findViewById(R.id.reps);
+        TextView note = row.findViewById(R.id.note);
         MaterialSwitch sw = row.findViewById(R.id.enabled_switch);
 
         time.setText(alarm.timeText());
         detail.setText(alarm.repeatText(this));
         reps.setText(alarm.taskSummary(this));
+        note.setText(alarm.note);
+        note.setVisibility(alarm.hasNote() ? View.VISIBLE : View.GONE);
 
         // 只有内容层变灰，删除按钮保持原色
         row.setContentAlpha(alarm.enabled ? 1f : 0.45f);
